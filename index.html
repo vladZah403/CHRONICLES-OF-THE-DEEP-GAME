@@ -1,0 +1,3615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>⚔ CHRONICLES OF THE DEEP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --gold:#c9913a;--gold2:#ffdd88;--purple:#9977ff;--red:#cc2200;
+            --green:#33cc55;--blue:#4488ff;
+            --bg:#07030a;--panel:#0f0b16;--border:#1e1530;--border2:#2a1a40;
+        }
+        html,body{width:100%;height:100%;overflow:hidden;}
+        body{
+            background:var(--bg);color:#e8d5a3;
+            font-family:'Crimson Text',serif;font-size:14px;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            user-select:none;
+        }
+        body::before{content:'';position:fixed;inset:0;z-index:-2;
+            background:radial-gradient(ellipse 80% 60% at 50% 40%,#120818,#07030a);}
+
+        /* ── STARS ── */
+        .stars{position:fixed;inset:0;z-index:-1;pointer-events:none;}
+        .star{position:absolute;border-radius:50%;background:#fff;
+            animation:twinkle var(--d,3s) ease-in-out infinite var(--del,0s);}
+        @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
+
+        /* ── SCREENS ── */
+        .screen{display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+            animation:fadeUp .5s ease;}
+        .screen.show{display:flex;}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+        @keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+        @keyframes diceRoll{0%{transform:rotate(0) scale(1)}25%{transform:rotate(15deg) scale(1.2)}
+            50%{transform:rotate(-10deg) scale(.9)}75%{transform:rotate(5deg) scale(1.1)}100%{transform:rotate(0) scale(1)}}
+        @keyframes glow{0%,100%{text-shadow:0 0 30px #c9913a88,0 0 60px #c9913a33}
+            50%{text-shadow:0 0 50px #c9913acc,0 0 100px #c9913a66}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}
+            40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+        /* ════════════ MENU ════════════ */
+        #s-menu{gap:24px;}
+        .logo-icon{font-size:3.5rem;animation:float 3s ease-in-out infinite;}
+        .logo-title{font-family:'Cinzel',serif;font-size:2.8rem;font-weight:900;color:var(--gold);
+            letter-spacing:.45em;animation:glow 3s ease-in-out infinite;}
+        .logo-sub{font-size:.8rem;color:#5a4040;letter-spacing:.4em;font-style:italic;}
+        .menu-btns{display:flex;flex-direction:column;gap:10px;align-items:center;}
+        .mbtn{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.22em;color:var(--gold);
+            padding:13px 48px;cursor:pointer;background:linear-gradient(135deg,#160e24,#0f0818);
+            border:1px solid #3a2060;border-radius:5px;transition:all .2s;min-width:260px;text-align:center;}
+        .mbtn:hover{background:linear-gradient(135deg,#220e38,#160e24);border-color:var(--purple);color:#fff;
+            transform:translateY(-2px);box-shadow:0 8px 25px #5544aa22;}
+        .mbtn.gold{border-color:var(--gold);}
+        .mbtn.gold:hover{border-color:var(--gold2);box-shadow:0 8px 25px #c9913a22;}
+
+        /* ════════════ CLASS SCREEN ════════════ */
+        .screen-title{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);
+            letter-spacing:.35em;text-align:center;}
+        .class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+        .cls-card{width:180px;background:linear-gradient(160deg,#130c1a,#0d0810);
+            border:1px solid #3a2060;border-radius:8px;padding:20px 15px;cursor:pointer;
+            transition:all .2s;position:relative;overflow:hidden;text-align:center;}
+        .cls-card:hover{transform:translateY(-5px);}
+        .cls-card.warrior{--cc:#c9613a;border-color:#6a3010;}
+        .cls-card.warrior:hover{border-color:var(--cc);box-shadow:0 10px 30px #8b3a0a33;}
+        .cls-card.mage{--cc:#9977ff;border-color:#3a2080;}
+        .cls-card.mage:hover{border-color:var(--cc);box-shadow:0 10px 30px #4422aa33;}
+        .cls-card.rogue{--cc:#33cc55;border-color:#1a5030;}
+        .cls-card.rogue:hover{border-color:var(--cc);box-shadow:0 10px 30px #1a6a3033;}
+        .cls-ico{font-size:2.6rem;margin-bottom:8px;display:block;}
+        .cls-name{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;margin-bottom:6px;}
+        .warrior .cls-name{color:#c9613a;}.mage .cls-name{color:#9977ff;}.rogue .cls-name{color:#33cc55;}
+        .cls-desc{font-size:.7rem;color:#7a6860;line-height:1.55;margin-bottom:10px;}
+        .stat-bars{display:flex;flex-direction:column;gap:4px;}
+        .sb-row{display:flex;justify-content:space-between;align-items:center;font-size:.65rem;}
+        .sb-lbl{color:#5a4850;}.sb-bar{width:72px;height:4px;background:#1a1020;border-radius:2px;overflow:hidden;}
+        .sb-fill{height:100%;border-radius:2px;}
+        .warrior .sb-fill{background:#c9613a;}.mage .sb-fill{background:#9977ff;}.rogue .sb-fill{background:#33cc55;}
+
+        /* ════════════ DIFF SCREEN ════════════ */
+        .diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+        .diff-card{width:170px;background:linear-gradient(160deg,#130c1a,#0d0810);
+            border:1px solid #251838;border-radius:8px;padding:18px 14px;cursor:pointer;
+            transition:all .2s;text-align:center;}
+        .diff-card:hover{transform:translateY(-4px);}
+        .diff-card.easy{border-color:#1a5030;}
+        .diff-card.easy:hover{border-color:#33cc55;box-shadow:0 8px 20px #1a6a3033;}
+        .diff-card.normal{border-color:#3a2060;}
+        .diff-card.normal:hover{border-color:#9977ff;box-shadow:0 8px 20px #4422aa33;}
+        .diff-card.hard{border-color:#6a1010;}
+        .diff-card.hard:hover{border-color:#cc2200;box-shadow:0 8px 20px #6a000033;}
+        .diff-ico{font-size:2.2rem;margin-bottom:8px;display:block;}
+        .diff-name{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;margin-bottom:5px;}
+        .easy .diff-name{color:#33cc55;}.normal .diff-name{color:#9977ff;}.hard .diff-name{color:#cc4422;}
+        .diff-desc{font-size:.68rem;color:#6a5870;line-height:1.5;margin-bottom:8px;}
+        .diff-mods{font-size:.62rem;line-height:1.75;text-align:left;}
+        .easy .diff-mods{color:#1a6a30;}.normal .diff-mods{color:#4a3870;}.hard .diff-mods{color:#6a2010;}
+
+        .back-btn{font-family:'Cinzel',serif;font-size:.68rem;color:#3a2a50;letter-spacing:.2em;
+            background:none;border:none;cursor:pointer;padding:5px 14px;transition:color .2s;}
+        .back-btn:hover{color:#9977ff;}
+
+        /* ════════════ GAME LAYOUT ════════════ */
+        #s-game{flex-direction:row;align-items:stretch;gap:0;padding:0;
+            width:100vw;height:100vh;overflow:hidden;}
+        #s-game.show{display:flex;animation:none;}
+
+        /* LEFT SIDEBAR */
+        #sidebar-left{
+            width:210px;flex-shrink:0;background:var(--panel);
+            border-right:1px solid var(--border);
+            display:flex;flex-direction:column;gap:0;overflow:hidden;
+        }
+
+        /* CENTER: map + bottom bar */
+        #center-col{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+        #top-bar{
+            height:34px;flex-shrink:0;background:var(--panel);
+            border-bottom:1px solid var(--border);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:0 12px;font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold);letter-spacing:.15em;
+        }
+        #map-wrap{flex:1;overflow:hidden;position:relative;}
+        #map-canvas{display:block;image-rendering:pixelated;}
+        #bot-bar{
+            height:38px;flex-shrink:0;background:var(--panel);
+            border-top:1px solid var(--border);
+            display:flex;align-items:center;gap:12px;padding:0 12px;font-size:.68rem;
+        }
+
+        /* RIGHT SIDEBAR */
+        #sidebar-right{
+            width:220px;flex-shrink:0;background:var(--panel);
+            border-left:1px solid var(--border);
+            display:flex;flex-direction:column;overflow:hidden;
+        }
+
+        /* ── PANEL SECTIONS ── */
+        .pnl{border-bottom:1px solid var(--border);padding:8px 10px;}
+        .pnl:last-child{border-bottom:none;}
+        .pnl-title{font-family:'Cinzel',serif;font-size:.6rem;color:var(--purple);
+            text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px;
+            display:flex;justify-content:space-between;align-items:center;}
+        .pnl-title span{color:#4a3860;}
+
+        /* ── HERO STATS ── */
+        .bar-wrap{margin-bottom:4px;}
+        .bar-lbl{font-size:.65rem;color:#8a7860;margin-bottom:2px;display:flex;justify-content:space-between;}
+        .bar-lbl em{color:#e8d5a3;font-style:normal;font-size:.62rem;}
+        .bar{height:7px;background:#0a0810;border:1px solid #1a1028;border-radius:2px;overflow:hidden;}
+        .bar-fill{height:100%;transition:width .3s;border-radius:1px;}
+        .hp-f{background:linear-gradient(90deg,#7a0000,#cc2200);}
+        .mp-f{background:linear-gradient(90deg,#002288,#4466cc);}
+        .xp-f{background:linear-gradient(90deg,#445500,#88bb00);}
+        .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px;}
+        .sbox{background:#09080e;border:1px solid var(--border);border-radius:3px;
+            padding:4px;text-align:center;}
+        .sbox .v{font-size:.85rem;font-weight:600;color:#e8d5a3;font-family:'Cinzel',serif;}
+        .sbox .k{font-size:.54rem;color:#4a3860;text-transform:uppercase;letter-spacing:.08em;}
+        #status-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+        .badge{font-size:.56rem;padding:2px 6px;border-radius:8px;font-family:'Cinzel',serif;}
+        .badge.poison{background:#071a07;border:1px solid #1a8a1a;color:#44ff44;}
+        .badge.burn{background:#1a0700;border:1px solid #8a3a00;color:#ff8844;}
+        .badge.stun{background:#070718;border:1px solid #3a3a8a;color:#8888ff;}
+        .badge.lives{background:#071a0f;border:1px solid #1a8a44;color:#44cc88;}
+
+        /* ── DICE ── */
+        #dice-panel{background:#0a0814;border-bottom:1px solid var(--border);padding:8px 10px;}
+        #dice-display{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:6px;}
+        .die{width:44px;height:44px;background:#110c1a;border:2px solid #3a2060;border-radius:6px;
+            display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+            font-family:'Cinzel',serif;color:var(--gold);cursor:pointer;transition:all .2s;position:relative;}
+        .die:hover{border-color:var(--purple);background:#180e28;}
+        .die.rolling{animation:diceRoll .5s ease;}
+        .die.locked{border-color:var(--gold);background:#1a1004;}
+        .die-lbl{font-size:.54rem;color:#4a3860;text-align:center;margin-top:2px;font-family:'Cinzel',serif;}
+        .dice-info{font-size:.65rem;color:#6a5870;text-align:center;line-height:1.5;}
+        .roll-btn{
+            width:100%;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.15em;
+            color:var(--gold);padding:7px;cursor:pointer;
+            background:linear-gradient(135deg,#160e24,#0f0818);
+            border:1px solid #3a2060;border-radius:4px;transition:all .15s;margin-top:5px;}
+        .roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#220e38,#160e24);
+            border-color:var(--purple);color:#fff;}
+        .roll-btn:disabled{opacity:.3;cursor:not-allowed;}
+        .roll-btn.active{border-color:var(--gold);color:var(--gold);}
+
+        /* ── MINIMAP ── */
+        #minimap{display:block;image-rendering:pixelated;border:1px solid var(--border);width:100%;}
+
+        /* ── SKILLS ── */
+        .sk-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;}
+        .sk-key{width:20px;height:20px;background:#09080e;border:1px solid var(--border2);border-radius:3px;
+            font-family:'Cinzel',serif;font-size:.55rem;color:#5544aa;display:flex;align-items:center;
+            justify-content:center;flex-shrink:0;margin-top:1px;}
+        .sk-info{flex:1;min-width:0;}
+        .sk-name{font-size:.68rem;color:var(--gold);}
+        .sk-sub{font-size:.56rem;color:#5a4860;margin-top:1px;}
+        .sk-lvl{font-size:.54rem;color:#5544aa;background:#09080e;border:1px solid var(--border2);
+            border-radius:2px;padding:1px 4px;flex-shrink:0;font-family:'Cinzel',serif;}
+        .sk-up{font-size:.5rem;color:var(--green);cursor:pointer;background:#041008;
+            border:1px solid #1a3a14;border-radius:2px;padding:2px 4px;flex-shrink:0;transition:all .1s;}
+        .sk-up:hover{background:#082010;border-color:var(--green);}
+        .sk-up:disabled{opacity:.3;cursor:not-allowed;}
+        #sp-badge{font-size:.62rem;color:var(--green);font-family:'Cinzel',serif;
+            background:#041008;border:1px solid #1a3a14;border-radius:3px;
+            padding:3px 6px;text-align:center;margin-bottom:5px;}
+
+        /* ── INVENTORY ── */
+        #inv-grid{display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;padding-right:1px;}
+        #inv-grid::-webkit-scrollbar{width:3px;}
+        #inv-grid::-webkit-scrollbar-thumb{background:#1a0e2a;}
+        .inv-slot{
+            background:#09080e;border:1px solid #1e1428;border-radius:5px;
+            display:flex;align-items:center;gap:8px;padding:5px 7px;
+            cursor:pointer;transition:all .12s;min-height:42px;position:relative;
+        }
+        .inv-slot:hover:not(.empty){border-color:var(--purple);background:#130a22;transform:translateX(2px);}
+        .inv-slot.eq{border-color:var(--gold);background:#120e02;}
+        .inv-slot.eq::before{
+            content:'E';position:absolute;top:2px;right:4px;
+            font-family:'Cinzel',serif;font-size:.45rem;color:var(--gold);
+        }
+        .inv-slot.empty{cursor:default;opacity:.15;pointer-events:none;min-height:24px;}
+        .inv-slot .si{font-size:1.5rem;line-height:1;flex-shrink:0;width:26px;text-align:center;}
+        .inv-slot .si-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+        .inv-slot .sn{font-family:'Cinzel',serif;font-size:.58rem;color:#d4bc88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .inv-slot .sd{font-size:.52rem;color:#5a4860;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .inv-slot .sr{font-size:.44rem;font-family:'Cinzel',serif;letter-spacing:.05em;margin-top:1px;}
+        .inv-empty-slots{display:flex;gap:3px;flex-wrap:wrap;padding:2px 0;}
+        .inv-empty-cell{width:18px;height:18px;background:#09080e;border:1px solid #150e20;border-radius:3px;opacity:.3;}
+        .inv-category{font-family:'Cinzel',serif;font-size:.46rem;color:#3a2a50;
+            letter-spacing:.15em;padding:4px 2px 2px;border-top:1px solid #130a1a;margin-top:2px;}
+        .inv-category:first-child{border-top:none;margin-top:0;}
+
+        /* ── LOG ── */
+        #log{overflow-y:auto;font-size:.65rem;color:#6a5870;line-height:1.55;padding:0 2px;flex:1;}
+        #log::-webkit-scrollbar{width:3px;}
+        #log::-webkit-scrollbar-thumb{background:var(--border2);}
+        .le{padding:2px 0;border-bottom:1px solid #0e0a18;}
+        .le-dmg{color:#cc4422;}.le-heal{color:#44aa44;}.le-loot{color:var(--gold);}
+        .le-level{color:#ffdd44;}.le-info{color:#7766aa;}.le-dice{color:#4488ff;}
+
+        /* ── CTRL ── */
+        #ctrl-hint{font-size:.58rem;color:#2a1a40;text-align:center;line-height:1.7;padding:5px 6px;
+            border-top:1px solid var(--border);}
+
+        /* ════════════ COMBAT OVERLAY ════════════ */
+        #combat-ov{position:fixed;inset:0;z-index:60;background:rgba(7,3,10,.92);
+            display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+        #combat-box{
+            background:linear-gradient(160deg,#130c1a,#0d0810);
+            border:2px solid #5544aa;border-radius:10px;width:540px;padding:20px;
+            box-shadow:0 0 60px #5544aa33,inset 0 0 30px #00000055;
+            animation:popIn .25s ease;
+        }
+        .cb-title{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold);
+            text-align:center;letter-spacing:.22em;margin-bottom:8px;}
+        .turn-badge{text-align:center;font-size:.65rem;letter-spacing:.18em;padding:3px 8px;
+            border-radius:3px;margin-bottom:12px;font-family:'Cinzel',serif;}
+        .tb-p{color:#88aaff;background:#080818;border:1px solid #1a2255;}
+        .tb-e{color:#ff8866;background:#120808;border:1px solid #441100;}
+        .fighters{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+        .fcard{background:#0a0812;border:1px solid var(--border);border-radius:6px;
+            padding:10px 9px;width:43%;}
+        .fcard-ico{font-size:2rem;text-align:center;display:block;margin-bottom:4px;}
+        .fcard-name{font-family:'Cinzel',serif;font-size:.7rem;text-align:center;margin-bottom:5px;}
+        .fn-p{color:var(--gold);}.fn-e{color:#cc4422;}
+        .fhp-bar{height:9px;background:#0a0808;border:1px solid #1a1028;border-radius:3px;overflow:hidden;margin-bottom:2px;}
+        .fhp-fill{height:100%;transition:width .4s;border-radius:2px;}
+        .fhp-p{background:linear-gradient(90deg,#7a0000,#cc2200);}
+        .fhp-e{background:linear-gradient(90deg,#cc2200,#ff5500);}
+        .fhp-txt{font-size:.62rem;color:#7a6870;text-align:center;}
+        .vs-lbl{font-family:'Cinzel',serif;font-size:1.2rem;color:#3a2860;}
+
+        /* ── COMBAT DICE AREA ── */
+        .dice-area{
+            background:#080612;border:1px solid #1a1030;border-radius:6px;
+            padding:10px;margin-bottom:12px;
+        }
+        .dice-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:6px;}
+        .cdice{width:48px;height:48px;background:#110c1a;border:2px solid #3a2060;border-radius:8px;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            font-family:'Cinzel',serif;color:var(--gold);transition:all .2s;}
+        .cdice .d-val{font-size:1.5rem;font-weight:700;line-height:1;}
+        .cdice .d-lbl{font-size:.45rem;color:#5a4860;letter-spacing:.1em;}
+        .cdice.rolling{animation:diceRoll .6s ease;}
+        .cdice.hi{border-color:#ffdd44;background:#18120a;color:#ffdd44;}
+        .cdice.lo{border-color:#882200;background:#120808;color:#ff5533;}
+        .dice-result{font-size:.72rem;color:#8877aa;text-align:center;line-height:1.6;}
+        .roll-action-btn{
+            font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.15em;padding:7px 0;
+            width:100%;cursor:pointer;background:linear-gradient(135deg,#1a0e2a,#120818);
+            border:1px solid #5544aa;border-radius:4px;color:var(--purple);transition:all .15s;
+        }
+        .roll-action-btn:hover:not(:disabled){background:linear-gradient(135deg,#240e3a,#1a0e28);
+            border-color:var(--purple);color:#fff;}
+        .roll-action-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+        /* ── COMBAT LOG ── */
+        #c-log{background:#060410;border:1px solid #120e28;border-radius:4px;
+            padding:6px;height:72px;overflow-y:auto;font-size:.7rem;line-height:1.6;
+            color:#6a5880;margin-bottom:10px;}
+        #c-log::-webkit-scrollbar{width:3px;}
+        #c-log::-webkit-scrollbar-thumb{background:#2a1a40;}
+        .cl-p{color:#88aaff;}.cl-e{color:#ff7755;}.cl-info{color:#8877cc;}
+        .cl-dice{color:#4488ff;}.cl-crit{color:#ffdd44;}.cl-heal{color:#44cc66;}
+
+        /* ── COMBAT ACTIONS ── */
+        .cact-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+        .cact{background:linear-gradient(135deg,#160e24,#100818);border:1px solid #2a1a40;
+            border-radius:5px;color:var(--gold);font-family:'Cinzel',serif;font-size:.68rem;
+            padding:9px 7px;cursor:pointer;transition:all .12s;
+            display:flex;flex-direction:column;align-items:center;gap:2px;}
+        .cact .ci{font-size:1.1rem;}.cact .cl{font-size:.68rem;}.cact .cs{font-size:.56rem;color:#5a4870;}
+        .cact:hover:not(:disabled){border-color:var(--purple);background:linear-gradient(135deg,#200e38,#160e24);color:#fff;}
+        .cact:hover:not(:disabled) .cs{color:var(--purple);}
+        .cact:disabled{opacity:.3;cursor:not-allowed;}
+
+        /* ════════════ MODALS ════════════ */
+        .modal-ov{position:fixed;inset:0;z-index:100;background:rgba(7,3,10,.88);
+            display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+        .modal-ov.open{display:flex;}
+        .modal{background:linear-gradient(160deg,#130c1a,#0d0810);
+            border:2px solid #5544aa;border-radius:8px;padding:20px;
+            box-shadow:0 0 40px #5544aa33;animation:popIn .2s ease;}
+
+        /* Item modal */
+        #item-modal .modal{width:260px;text-align:center;}
+        .im-ico{font-size:2.6rem;margin-bottom:6px;}
+        .im-name{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold);margin-bottom:3px;}
+        .im-type{font-size:.65rem;color:#7766aa;margin-bottom:6px;text-transform:capitalize;}
+        .im-desc{font-size:.78rem;color:#b0a080;margin-bottom:14px;}
+        .im-btns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
+        .im-btn{background:#0d0810;border:1px solid #5544aa;color:#9977ff;
+            font-family:'Cinzel',serif;font-size:.65rem;padding:6px 13px;cursor:pointer;
+            border-radius:3px;transition:all .12s;}
+        .im-btn:hover{background:#180e28;border-color:var(--purple);color:#fff;}
+        .im-btn.use{border-color:#44aa44;color:#44cc66;}
+        .im-btn.use:hover{background:#091809;border-color:var(--green);}
+        .im-btn.drop{border-color:#aa4422;color:#cc6644;}
+        .im-btn.drop:hover{background:#180808;border-color:var(--red);}
+
+        /* Tooltip */
+        #tooltip{position:fixed;z-index:300;background:#130c1a;border:1px solid #5544aa;
+            border-radius:5px;padding:8px 11px;pointer-events:none;display:none;
+            box-shadow:0 4px 20px #00000099;min-width:150px;}
+        .tt-n{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);margin-bottom:2px;}
+        .tt-t{font-size:.62rem;color:#7766aa;margin-bottom:3px;}
+        .tt-d{font-size:.7rem;color:#b0a080;margin-bottom:3px;}
+        .tt-e{font-size:.62rem;color:#88cc44;}
+        .tt-h{font-size:.58rem;color:#3a2860;font-style:italic;margin-top:2px;}
+
+        /* Shop modal */
+        #shop-modal .modal{
+            width:520px;max-height:88vh;display:flex;flex-direction:column;padding:14px 16px 12px;
+        }
+        #shop-modal h2{font-family:'Cinzel',serif;font-size:.95rem;color:#ffdd44;text-align:center;letter-spacing:.22em;margin-bottom:6px;flex-shrink:0;}
+        #shop-top-bar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:8px;gap:8px;}
+        #shop-gold{font-size:.72rem;color:#aa8830;white-space:nowrap;}
+        #shop-tabs{display:flex;gap:5px;flex-shrink:0;}
+        #shop-grid{
+            flex:1;overflow-y:auto;
+            display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;
+            padding-right:4px;margin-bottom:10px;
+            min-height:0;
+        }
+        #shop-grid::-webkit-scrollbar{width:4px;}
+        #shop-grid::-webkit-scrollbar-thumb{background:#2a1a40;border-radius:2px;}
+        #shop-grid::-webkit-scrollbar-track{background:#09080e;}
+        .sh-item{
+            background:#0d0810;border:1px solid #2a1a30;border-radius:5px;padding:8px 6px 6px;
+            display:flex;flex-direction:column;align-items:center;gap:2px;
+            transition:border-color .15s;
+        }
+        .sh-item:hover:not(.sold){border-color:#4a3060;}
+        .sh-item.sold{opacity:.3;pointer-events:none;}
+        .sh-ico{font-size:1.3rem;line-height:1;}
+        .sh-name{font-family:'Cinzel',serif;font-size:.58rem;color:var(--gold);text-align:center;line-height:1.3;margin-top:1px;}
+        .sh-desc{font-size:.52rem;color:#5a4840;text-align:center;line-height:1.3;}
+        .sh-price{font-size:.65rem;color:#ffdd44;font-weight:bold;margin-top:2px;}
+        .sh-btn{
+            background:#1a1005;border:1px solid #aa7700;color:#ffdd44;font-family:'Cinzel',serif;
+            font-size:.55rem;padding:3px 8px;cursor:pointer;border-radius:3px;margin-top:3px;
+            transition:all .12s;width:100%;
+        }
+        .sh-btn:hover:not(:disabled){background:#2a2005;border-color:#ffdd44;}
+        .sh-btn:disabled{opacity:.35;cursor:not-allowed;}
+        .sh-close{
+            display:block;margin:0 auto;flex-shrink:0;
+            background:#0d0808;border:1px solid #3a2a50;color:#6a5880;
+            font-family:'Cinzel',serif;font-size:.65rem;padding:6px 24px;
+            cursor:pointer;border-radius:3px;transition:all .12s;
+        }
+        .sh-close:hover{background:#180e28;border-color:var(--purple);color:#9977ff;}
+        .sh-tab{
+            font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.08em;padding:4px 10px;
+            cursor:pointer;background:#09080e;border:1px solid #2a1a40;border-radius:3px;
+            color:#5a4860;transition:all .15s;white-space:nowrap;
+        }
+        .sh-tab:hover{color:#9977ff;border-color:#9977ff;}
+        .sh-tab.active{color:var(--gold);border-color:var(--gold);background:#150e02;}
+        .sh-section-hdr{
+            grid-column:1/-1;font-family:'Cinzel',serif;font-size:.58rem;
+            letter-spacing:.12em;padding:3px 0 4px;
+            border-bottom:1px solid #2a1a40;color:#7766aa;
+        }
+
+        /* Dungeon prompt */
+        #dung-prompt .modal{width:320px;text-align:center;}
+        #dung-prompt h3{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);margin-bottom:6px;letter-spacing:.18em;}
+        #dung-prompt p{font-size:.75rem;color:#8a7860;margin-bottom:16px;line-height:1.6;}
+        .dp-btns{display:flex;gap:10px;justify-content:center;}
+        .dp-btn{background:#0d0810;border:1px solid #5544aa;color:#9977ff;font-family:'Cinzel',serif;
+            font-size:.7rem;padding:8px 18px;cursor:pointer;border-radius:3px;transition:all .12s;letter-spacing:.1em;}
+        .dp-btn:hover{background:#180e28;border-color:var(--purple);color:#fff;}
+        .dp-btn.enter{border-color:var(--gold);color:var(--gold);}
+        .dp-btn.enter:hover{background:#18100a;border-color:var(--gold2);color:var(--gold2);}
+
+        /* Death/Win */
+        #endgame-ov{position:fixed;inset:0;z-index:200;background:rgba(7,3,10,.96);
+            display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+        #endgame-ov h2{font-family:'Cinzel',serif;font-size:2.2rem;}
+        #endgame-ov p{color:#b8a070;font-size:.88rem;}
+        .eg-btn{background:#0d0810;border:2px solid #5544aa;color:#9977ff;font-family:'Cinzel',serif;
+            font-size:.82rem;padding:10px 26px;cursor:pointer;letter-spacing:.18em;border-radius:4px;transition:all .2s;}
+        .eg-btn:hover{background:#180e28;color:#fff;border-color:var(--purple);}
+        .eg-btn.red{border-color:#8b0000;color:#cc4422;}
+        .eg-btn.red:hover{background:#180808;border-color:var(--red);}
+
+        /* ── BOT BAR items ── */
+        .bb-item{display:flex;align-items:center;gap:5px;font-size:.65rem;color:#5a4870;}
+        .bb-item strong{color:#c9913a;font-family:'Cinzel',serif;}
+        .bb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+
+        /* ── LOCATION MARKER TOOLTIP ── */
+        #loc-tip{position:absolute;background:#130c1a;border:1px solid var(--gold);border-radius:4px;
+            padding:5px 10px;font-size:.65rem;color:#c9913a;pointer-events:none;display:none;
+            font-family:'Cinzel',serif;letter-spacing:.1em;white-space:nowrap;z-index:10;}
+
+        /* ── MOVE INDICATOR ── */
+        #move-ind{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+            font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold);
+            background:rgba(13,8,16,.85);border:1px solid #3a2060;border-radius:3px;
+            padding:3px 10px;pointer-events:none;white-space:nowrap;letter-spacing:.1em;}
+        /* ═══ FULL INVENTORY SCREEN ═══ */
+        #full-inv-modal{
+            position:fixed;inset:0;z-index:200;background:rgba(4,2,8,.96);
+            display:none;flex-direction:column;
+        }
+        #full-inv-modal.open{display:flex;}
+        #fi-header{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:12px 20px;border-bottom:1px solid #1e1430;flex-shrink:0;
+        }
+        #fi-header h2{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);letter-spacing:.25em;}
+        #fi-close-btn{
+            font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;
+            background:#0d0810;border:1px solid #3a2a50;color:#7766aa;
+            padding:6px 16px;cursor:pointer;border-radius:3px;transition:all .12s;
+        }
+        #fi-close-btn:hover{border-color:#9977ff;color:#bb99ff;}
+        #fi-body{
+            flex:1;display:grid;grid-template-columns:280px 1fr;gap:0;overflow:hidden;
+        }
+
+        /* LEFT: character paper-doll */
+        #fi-character{
+            border-right:1px solid #1e1430;padding:16px 14px;
+            display:flex;flex-direction:column;gap:10px;overflow-y:auto;background:#06040c;
+        }
+        #fi-character::-webkit-scrollbar{width:3px;}
+        #fi-doll-title{font-family:'Cinzel',serif;font-size:.65rem;color:var(--purple);letter-spacing:.2em;margin-bottom:4px;}
+        #fi-doll{display:flex;flex-direction:column;gap:6px;}
+        .eq-slot{
+            background:#09080e;border:1px solid #1e1428;border-radius:6px;
+            display:flex;align-items:center;gap:10px;padding:8px 10px;min-height:52px;
+            position:relative;cursor:default;transition:border-color .12s;
+        }
+        .eq-slot.has-item{cursor:pointer;border-color:#2a1a40;}
+        .eq-slot.has-item:hover{border-color:var(--purple);background:#110820;}
+        .eq-slot-label{
+            position:absolute;top:3px;left:8px;
+            font-family:'Cinzel',serif;font-size:.42rem;color:#3a2a50;letter-spacing:.1em;
+        }
+        .eq-slot-ico{font-size:1.6rem;width:32px;text-align:center;flex-shrink:0;}
+        .eq-slot-ico.placeholder{font-size:1rem;opacity:.2;}
+        .eq-slot-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+        .eq-slot-name{font-family:'Cinzel',serif;font-size:.6rem;color:#d4bc88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .eq-slot-desc{font-size:.52rem;color:#5a4860;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .eq-slot-empty-txt{font-family:'Cinzel',serif;font-size:.55rem;color:#2a1a38;}
+        #fi-stats{background:#07060e;border:1px solid #1a1228;border-radius:6px;padding:10px 12px;}
+        #fi-stats-title{font-family:'Cinzel',serif;font-size:.58rem;color:#5a4870;letter-spacing:.15em;margin-bottom:8px;}
+        .fi-stat-row{display:flex;justify-content:space-between;font-size:.6rem;padding:2px 0;border-bottom:1px solid #0e0a18;}
+        .fi-stat-row:last-child{border-bottom:none;}
+        .fi-stat-key{color:#4a3860;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.08em;}
+        .fi-stat-val{color:#c9913a;font-weight:bold;}
+
+        /* RIGHT: full loot grid */
+        #fi-loot{
+            padding:14px 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden;
+        }
+        #fi-loot-tabs{display:flex;gap:5px;flex-shrink:0;margin-bottom:4px;}
+        .fi-tab{
+            font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.08em;padding:4px 12px;
+            cursor:pointer;background:#09080e;border:1px solid #2a1a40;border-radius:3px;
+            color:#5a4860;transition:all .15s;
+        }
+        .fi-tab:hover{color:#9977ff;border-color:#9977ff;}
+        .fi-tab.active{color:var(--gold);border-color:var(--gold);background:#150e02;}
+        #fi-loot-grid{
+            flex:1;overflow-y:auto;
+            display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:5px;
+            align-content:start;
+        }
+        #fi-loot-grid::-webkit-scrollbar{width:4px;}
+        #fi-loot-grid::-webkit-scrollbar-thumb{background:#2a1a40;border-radius:2px;}
+        .fi-item{
+            background:#09080e;border:1px solid #1e1428;border-radius:5px;
+            display:flex;align-items:center;gap:8px;padding:6px 8px;
+            cursor:pointer;transition:all .12s;
+        }
+        .fi-item:hover{border-color:var(--purple);background:#130a22;transform:translateX(2px);}
+        .fi-item.fi-equipped{border-color:var(--gold);background:#120e02;}
+        .fi-item .fi-ico{font-size:1.4rem;flex-shrink:0;width:26px;text-align:center;}
+        .fi-item .fi-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+        .fi-item .fi-name{font-family:'Cinzel',serif;font-size:.58rem;color:#d4bc88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .fi-item .fi-desc{font-size:.5rem;color:#5a4860;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .fi-item .fi-rar{font-size:.44rem;font-family:'Cinzel',serif;}
+        .fi-empty{color:#2a1a38;font-family:'Cinzel',serif;font-size:.65rem;text-align:center;padding:30px;grid-column:1/-1;}
+        #fi-loot-count{font-size:.58rem;color:#3a2a50;flex-shrink:0;}
+    </style>
+</head>
+<body>
+
+<!-- STARS -->
+<div class="stars" id="stars"></div>
+
+<!-- ══════════ MAIN MENU ══════════ -->
+<div class="screen show" id="s-menu">
+    <div style="text-align:center">
+        <div class="logo-icon">⚔️</div>
+        <div class="logo-title">CHRONICLES</div>
+        <div class="logo-sub">of the deep · хроники подземелья</div>
+    </div>
+    <div class="menu-btns">
+        <button class="mbtn gold" onclick="showScreen('s-class')">⚔ Начать путешествие</button>
+    </div>
+    <div style="font-size:.58rem;color:#1a1028;letter-spacing:.12em;font-family:'Cinzel',serif;">v3.0 · DnD Edition</div>
+</div>
+
+<!-- ══════════ CLASS SELECT ══════════ -->
+<div class="screen" id="s-class">
+    <div class="screen-title">⚔ Выбери героя</div>
+    <div class="class-grid">
+        <div class="cls-card warrior" onclick="selectClass('warrior')">
+            <span class="cls-ico">🛡️</span>
+            <div class="cls-name">Воин</div>
+            <div class="cls-desc">Непробиваемый боец. Много HP, умеет блокировать удары щитом.</div>
+            <div class="stat-bars">
+                <div class="sb-row"><span class="sb-lbl">Атака</span><div class="sb-bar"><div class="sb-fill" style="width:72%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">Защита</span><div class="sb-bar"><div class="sb-fill" style="width:90%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">HP</span><div class="sb-bar"><div class="sb-fill" style="width:95%"></div></div></div>
+            </div>
+        </div>
+        <div class="cls-card mage" onclick="selectClass('mage')">
+            <span class="cls-ico">🧙</span>
+            <div class="cls-name">Маг</div>
+            <div class="cls-desc">Властелин заклинаний. Огромный урон, но слабое тело.</div>
+            <div class="stat-bars">
+                <div class="sb-row"><span class="sb-lbl">Магия</span><div class="sb-bar"><div class="sb-fill" style="width:95%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">Защита</span><div class="sb-bar"><div class="sb-fill" style="width:28%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">Мана</span><div class="sb-bar"><div class="sb-fill" style="width:95%"></div></div></div>
+            </div>
+        </div>
+        <div class="cls-card rogue" onclick="selectClass('rogue')">
+            <span class="cls-ico">🗡️</span>
+            <div class="cls-name">Плут</div>
+            <div class="cls-desc">Быстрый убийца. Высокий крит и уклонение.</div>
+            <div class="stat-bars">
+                <div class="sb-row"><span class="sb-lbl">Атака</span><div class="sb-bar"><div class="sb-fill" style="width:80%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">Крит</span><div class="sb-bar"><div class="sb-fill" style="width:88%"></div></div></div>
+                <div class="sb-row"><span class="sb-lbl">Уклон</span><div class="sb-bar"><div class="sb-fill" style="width:82%"></div></div></div>
+            </div>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showScreen('s-menu')">← Назад</button>
+</div>
+
+<!-- ══════════ DIFFICULTY ══════════ -->
+<div class="screen" id="s-diff">
+    <div class="screen-title">⚡ Выбери сложность</div>
+    <div class="diff-grid">
+        <div class="diff-card easy" onclick="startGame('easy')">
+            <span class="diff-ico">🌿</span>
+            <div class="diff-name">Путешественник</div>
+            <div class="diff-desc">Для тех, кто хочет насладиться приключением.</div>
+            <div class="diff-mods">✓ +30% HP<br>✓ Слабые враги<br>✓ Больше золота<br>✓ 3 жизни</div>
+        </div>
+        <div class="diff-card normal" onclick="startGame('normal')">
+            <span class="diff-ico">⚔️</span>
+            <div class="diff-name">Герой</div>
+            <div class="diff-desc">Честный баланс DnD приключения.</div>
+            <div class="diff-mods">◆ Стандарт<br>◆ Честная игра<br>◆ 1 жизнь</div>
+        </div>
+        <div class="diff-card hard" onclick="startGame('hard')">
+            <span class="diff-ico">💀</span>
+            <div class="diff-name">Легенда</div>
+            <div class="diff-desc">Только для настоящих авантюристов.</div>
+            <div class="diff-mods">✗ −25% HP<br>✗ Сильные враги<br>✗ Нет пощады<br>✗ 1 жизнь</div>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showScreen('s-class')">← Назад</button>
+</div>
+
+<!-- ══════════ GAME ══════════ -->
+<div class="screen" id="s-game">
+
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar-left">
+        <!-- Hero -->
+        <div class="pnl">
+            <div class="pnl-title" id="hero-lbl">🧙 Герой <span id="diff-badge"></span></div>
+            <div class="bar-wrap">
+                <div class="bar-lbl">❤️ HP <em id="hp-txt">—</em></div>
+                <div class="bar"><div class="bar-fill hp-f" id="hp-bar"></div></div>
+            </div>
+            <div class="bar-wrap">
+                <div class="bar-lbl">💧 MP <em id="mp-txt">—</em></div>
+                <div class="bar"><div class="bar-fill mp-f" id="mp-bar"></div></div>
+            </div>
+            <div class="bar-wrap">
+                <div class="bar-lbl">⭐ XP <em id="xp-txt" style="color:#88bb00"></em></div>
+                <div class="bar"><div class="bar-fill xp-f" id="xp-bar" style="width:0%"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="sbox"><div class="v" id="s-lvl">1</div><div class="k">Уровень</div></div>
+                <div class="sbox"><div class="v" id="s-atk">—</div><div class="k">Атака</div></div>
+                <div class="sbox"><div class="v" id="s-def">—</div><div class="k">Защита</div></div>
+                <div class="sbox"><div class="v" id="s-gold">0</div><div class="k">Золото💰</div></div>
+            </div>
+            <div id="status-row"></div>
+        </div>
+
+        <!-- DICE -->
+        <div id="dice-panel">
+            <div class="pnl-title">🎲 Кубики DnD <span id="dice-phase-lbl"></span></div>
+            <div id="dice-display">
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                    <div class="die" id="die-move" title="D6 — движение">⚀</div>
+                    <div class="die-lbl">D6 шаги</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                    <div class="die" id="die-bonus" title="D4 — бонус хода">⚀</div>
+                    <div class="die-lbl">D4 бонус</div>
+                </div>
+            </div>
+            <div class="dice-info" id="dice-info">Брось кубики, чтобы начать ход</div>
+            <button class="roll-btn" id="roll-btn" onclick="rollMoveDice()">🎲 Бросить кубики</button>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="pnl" style="flex-shrink:0;">
+            <div class="pnl-title">⚡ Умения</div>
+            <div id="sp-badge">✨ Очки: 0</div>
+            <div id="skills-list"></div>
+        </div>
+
+        <!-- INVENTORY -->
+        <div class="pnl" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="pnl-title" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>🎒 Инвентарь <span id="inv-count"></span></span>
+                <button onclick="openFullInventory()" style="font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.08em;background:#0d0810;border:1px solid #3a2a50;color:#7766aa;padding:2px 7px;cursor:pointer;border-radius:3px;transition:all .12s;" onmouseover="this.style.borderColor='#9977ff';this.style.color='#bb99ff'" onmouseout="this.style.borderColor='#3a2a50';this.style.color='#7766aa'">ОТКРЫТЬ</button>
+            </div>
+            <div id="inv-grid"></div>
+        </div>
+    </div>
+
+    <!-- CENTER -->
+    <div id="center-col">
+        <div id="top-bar">
+            <span id="loc-name">⚔ Мир Средиземья</span>
+            <span id="floor-txt"></span>
+            <span id="turn-txt" style="color:#5a4870;">Ход —</span>
+        </div>
+        <div id="map-wrap">
+            <canvas id="map-canvas"></canvas>
+            <div id="loc-tip"></div>
+            <div id="move-ind" style="display:none;"></div>
+        </div>
+        <div id="bot-bar">
+            <div class="bb-item">WASD/↑↓←→ — движение</div>
+            <div class="bb-sep"></div>
+            <div class="bb-item">F — подобрать</div>
+            <div class="bb-sep"></div>
+            <div class="bb-item">I — инвентарь</div>
+            <div class="bb-sep"></div>
+            <div class="bb-item">1/2 — умения в бою</div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div id="sidebar-right">
+        <!-- Minimap -->
+        <div class="pnl" style="flex-shrink:0;">
+            <div class="pnl-title">🗺 Карта <span id="map-mode-lbl"></span></div>
+            <canvas id="minimap" height="88"></canvas>
+        </div>
+
+        <!-- Quests -->
+        <div class="pnl" style="flex-shrink:0;max-height:120px;overflow-y:auto;">
+            <div class="pnl-title">📋 Квесты <span id="quest-count">0</span></div>
+            <div id="quests-panel" style="font-size:.62rem;color:#5a4860;line-height:1.6;"></div>
+        </div>
+
+        <!-- Log -->
+        <div class="pnl" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="pnl-title">📜 Журнал</div>
+            <div id="log"></div>
+        </div>
+
+        <div id="ctrl-hint">WASD — движение · F — подобрать<br>E — взаимодействие · 1/2 — умения</div>
+    </div>
+
+</div>
+
+<!-- COMBAT OVERLAY -->
+<div id="combat-ov">
+    <div id="combat-box">
+        <div class="cb-title">⚔ БОЙ</div>
+        <div id="turn-badge" class="turn-badge tb-p">ХОД ИГРОКА</div>
+
+        <div class="fighters">
+            <div class="fcard">
+                <span class="fcard-ico" id="cf-p-ico">🧙</span>
+                <div class="fcard-name fn-p" id="cf-p-name">Герой</div>
+                <div class="fhp-bar"><div class="fhp-fill fhp-p" id="cf-p-bar" style="width:100%"></div></div>
+                <div class="fhp-txt" id="cf-p-hp"></div>
+            </div>
+            <div class="vs-lbl">VS</div>
+            <div class="fcard">
+                <span class="fcard-ico" id="cf-e-ico">👹</span>
+                <div class="fcard-name fn-e" id="cf-e-name">Враг</div>
+                <div class="fhp-bar"><div class="fhp-fill fhp-e" id="cf-e-bar" style="width:100%"></div></div>
+                <div class="fhp-txt" id="cf-e-hp"></div>
+            </div>
+        </div>
+
+        <!-- COMBAT DICE -->
+        <div class="dice-area">
+            <div class="dice-row" id="c-dice-row">
+                <div class="cdice" id="cd-atk"><div class="d-val">—</div><div class="d-lbl">D20 атк</div></div>
+                <div style="font-size:.7rem;color:#3a2860;">+</div>
+                <div class="cdice" id="cd-mod"><div class="d-val">—</div><div class="d-lbl">бонус</div></div>
+                <div style="font-size:.7rem;color:#3a2860;">VS</div>
+                <div class="cdice" id="cd-def"><div class="d-val">—</div><div class="d-lbl">защита</div></div>
+            </div>
+            <div class="dice-result" id="c-dice-result">Нажми «Бросить» чтобы атаковать</div>
+            <button class="roll-action-btn" id="c-roll-btn" onclick="combatRoll()">🎲 Бросить кубики</button>
+        </div>
+
+        <div id="c-log"></div>
+
+        <div class="cact-grid">
+            <button class="cact" id="ca-attack" onclick="combatAction('attack')" disabled>
+                <span class="ci">⚔️</span><span class="cl">Атаковать</span><span class="cs">Бросить D20</span>
+            </button>
+            <button class="cact" id="ca-s1" onclick="combatAction('s1')" disabled>
+                <span class="ci" id="ca-s1-ico">🔥</span>
+                <span class="cl" id="ca-s1-name">Умение 1</span>
+                <span class="cs" id="ca-s1-sub">—</span>
+            </button>
+            <button class="cact" id="ca-s2" onclick="combatAction('s2')" disabled>
+                <span class="ci" id="ca-s2-ico">💧</span>
+                <span class="cl" id="ca-s2-name">Умение 2</span>
+                <span class="cs" id="ca-s2-sub">—</span>
+            </button>
+            <button class="cact" onclick="combatAction('flee')" disabled id="ca-flee">
+                <span class="ci">🏃</span><span class="cl">Бежать</span><span class="cs">D6 ≥ 4</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<!-- FULL INVENTORY SCREEN -->
+<div id="full-inv-modal">
+    <div id="fi-header">
+        <h2>⚔ СНАРЯЖЕНИЕ И ИНВЕНТАРЬ</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span id="fi-inv-count" style="font-size:.65rem;color:#4a3860;font-family:'Cinzel',serif;"></span>
+            <button id="fi-close-btn" onclick="closeFullInventory()">✕ ЗАКРЫТЬ</button>
+        </div>
+    </div>
+    <div id="fi-body">
+
+        <!-- LEFT: paper doll -->
+        <div id="fi-character">
+            <div id="fi-doll-title">ПЕРСОНАЖ</div>
+            <!-- Class badge -->
+            <div id="fi-class-badge" style="display:flex;align-items:center;gap:10px;background:#07060e;border:1px solid #1a1228;border-radius:6px;padding:10px 12px;">
+                <span id="fi-cls-ico" style="font-size:2rem;"></span>
+                <div>
+                    <div id="fi-cls-name" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);"></div>
+                    <div id="fi-cls-lvl" style="font-size:.6rem;color:#5a4870;margin-top:2px;"></div>
+                </div>
+            </div>
+
+            <!-- Equipment slots -->
+            <div id="fi-doll-title" style="margin-top:4px;">ЭКИПИРОВКА</div>
+            <div id="fi-doll">
+                <div class="eq-slot" id="eq-weapon" onclick="fiUnequip('weapon')">
+                    <span class="eq-slot-label">ОРУЖИЕ</span>
+                    <span class="eq-slot-ico placeholder" id="eq-weapon-ico">⚔</span>
+                    <div class="eq-slot-info" id="eq-weapon-info"><span class="eq-slot-empty-txt">Нет оружия</span></div>
+                </div>
+                <div class="eq-slot" id="eq-armor" onclick="fiUnequip('armor')">
+                    <span class="eq-slot-label">БРОНЯ</span>
+                    <span class="eq-slot-ico placeholder" id="eq-armor-ico">🛡</span>
+                    <div class="eq-slot-info" id="eq-armor-info"><span class="eq-slot-empty-txt">Нет брони</span></div>
+                </div>
+                <div class="eq-slot" id="eq-accessory" onclick="fiUnequip('accessory')">
+                    <span class="eq-slot-label">АКСЕССУАР</span>
+                    <span class="eq-slot-ico placeholder" id="eq-accessory-ico">💍</span>
+                    <div class="eq-slot-info" id="eq-accessory-info"><span class="eq-slot-empty-txt">Нет аксессуара</span></div>
+                </div>
+            </div>
+
+            <!-- Stats block -->
+            <div id="fi-stats" style="margin-top:4px;">
+                <div id="fi-stats-title">ХАРАКТЕРИСТИКИ</div>
+                <div id="fi-stats-body"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT: all items -->
+        <div id="fi-loot">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div id="fi-loot-tabs">
+                    <button class="fi-tab active" onclick="setFiTab('all')">Всё</button>
+                    <button class="fi-tab" onclick="setFiTab('weapon')">Оружие</button>
+                    <button class="fi-tab" onclick="setFiTab('armor')">Броня</button>
+                    <button class="fi-tab" onclick="setFiTab('accessory')">Аксессуары</button>
+                    <button class="fi-tab" onclick="setFiTab('other')">Расходники</button>
+                </div>
+                <span id="fi-loot-count"></span>
+            </div>
+            <div id="fi-loot-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-ov" id="item-modal" onclick="if(event.target===this)closeItemModal()">
+    <div class="modal">
+        <div class="im-ico" id="im-ico"></div>
+        <div class="im-name" id="im-name"></div>
+        <div class="im-type" id="im-type"></div>
+        <div class="im-desc" id="im-desc"></div>
+        <div class="im-btns" id="im-btns"></div>
+    </div>
+</div>
+
+<div class="modal-ov" id="shop-modal">
+    <div class="modal">
+        <h2 id="shop-title">🏪 ТОРГОВЕЦ</h2>
+        <div id="shop-top-bar">
+            <div id="shop-gold"></div>
+            <div id="shop-tabs"></div>
+        </div>
+        <div id="shop-grid"></div>
+        <button class="sh-close" onclick="closeShop()">↩ Уйти</button>
+    </div>
+</div>
+
+<div class="modal-ov" id="npc-modal" onclick="if(event.target===this)closeNpcDialog()">
+    <div class="modal" style="width:380px;text-align:center;">
+        <div id="npc-ico" style="font-size:2.4rem;margin-bottom:6px;"></div>
+        <h3 id="npc-name" style="font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold);letter-spacing:.2em;margin-bottom:4px;"></h3>
+        <div id="npc-dialog-text" style="font-size:.75rem;color:#b0a080;line-height:1.65;margin:10px 0 6px;font-style:italic;min-height:48px;"></div>
+        <div id="npc-phrases" style="margin-bottom:10px;"></div>
+        <div id="npc-quest-area" style="background:#09080e;border:1px solid #2a1a40;border-radius:5px;padding:10px;margin-bottom:10px;display:none;">
+            <div id="npc-quest-title" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);margin-bottom:4px;"></div>
+            <div id="npc-quest-desc" style="font-size:.68rem;color:#8a7860;margin-bottom:6px;line-height:1.5;"></div>
+            <div id="npc-quest-reward" style="font-size:.65rem;color:#9977ff;margin-bottom:8px;"></div>
+            <button id="npc-take-quest-btn" class="dp-btn enter" onclick="takeNpcQuest()" style="font-size:.65rem;padding:6px 18px;">📋 Взять задание</button>
+        </div>
+        <div id="npc-btns" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div>
+    </div>
+</div>
+
+<div class="modal-ov" id="dung-prompt">
+    <div class="modal">
+        <h3 id="dp-title">🕳️ ПОДЗЕМЕЛЬЕ</h3>
+        <p id="dp-desc"></p>
+        <div class="dp-btns">
+            <button class="dp-btn enter" onclick="enterDungeon()">⚔ Войти</button>
+            <button class="dp-btn" onclick="closeDungPrompt()">↩ Назад</button>
+        </div>
+    </div>
+</div>
+
+<div id="endgame-ov">
+    <h2 id="eg-title" style="color:#8b0000">💀 ТЫ ПАЛ</h2>
+    <p id="eg-stats"></p>
+    <button class="eg-btn red" onclick="backToMenu()">ВЕРНУТЬСЯ В МЕНЮ</button>
+</div>
+
+<div id="tooltip">
+    <div class="tt-n" id="tt-n"></div>
+    <div class="tt-t" id="tt-t"></div>
+    <div class="tt-d" id="tt-d"></div>
+    <div class="tt-e" id="tt-e"></div>
+    <div class="tt-h">Нажми для действий</div>
+</div>
+
+<script>
+    'use strict';
+    // ═══════════════════════════════════════════════════════════
+    //  CONSTANTS & HELPERS
+    // ═══════════════════════════════════════════════════════════
+    const $ = id => document.getElementById(id);
+    function rng(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    function rngf(){return Math.random();}
+    function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+
+    // Dice
+    function d(n){return rng(1,n);}
+    function rollD20(){return d(20);}
+    function rollD6(){return d(6);}
+    function rollD4(){return d(4);}
+
+    // ── Stars background ──
+    (function(){
+        const sb=$('stars');
+        for(let i=0;i<90;i++){
+            const s=document.createElement('div');
+            s.className='star';
+            s.style.cssText=`left:${rngf()*100}%;top:${rngf()*100}%;
+      width:${rngf()*2+.5}px;height:${rngf()*2+.5}px;
+      --d:${rngf()*4+2}s;--del:-${rngf()*4}s;opacity:${rngf()*.5+.1}`;
+            sb.appendChild(s);
+        }
+    })();
+
+    // ═══════════════════════════════════════════════════════════
+    //  CLASSES DATA
+    // ═══════════════════════════════════════════════════════════
+    const CLASSES = {
+        warrior:{
+            name:'Воин',emoji:'🛡️',color:'#c9613a',
+            hp:90,mp:25,atk:8,def:5,crit:.05,dodge:.05,
+            // D20 modifier = level-based bonus
+            atkMod: p => Math.floor(p.level*1.2 + p.atk/4),
+            defMod: p => Math.floor(p.def*1.5 + p.level),
+            skills:[
+                {id:'cleave',name:'Рассекающий',icon:'⚔️',mp:8,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['Урон ×1.2','Урон ×1.4 + игнор брони','Двойной удар'],
+                    desc:'Мощный удар +D8',
+                    fn(p,e,sk){
+                        const bonus = d(8) + sk.lvl*3;
+                        const mult = 1.5 + sk.lvl*0.2;
+                        const dmg = Math.floor(p.atk*mult + bonus);
+                        return {dmg, msg:`⚔️ Рассекающий: ${dmg} урона (+D8)!`};
+                    }},
+                {id:'block',name:'Щитовой блок',icon:'🛡️',mp:5,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['+5 HP лечения','+D6 контратака','Полный иммунитет 1 ход'],
+                    desc:'Блок + лечение',
+                    fn(p,e,sk){
+                        const h = 15 + sk.lvl*8;
+                        p.blocking = sk.lvl>=3 ? 'full' : true;
+                        p.hp = Math.min(p.hp+h, p.maxHp);
+                        const counter = sk.lvl>=2 ? d(6) : 0;
+                        if(counter) e.hp -= counter;
+                        return {dmg:counter, msg:`🛡️ Блок! +${h} HP${counter?` +${counter} контр.`:''}`, heal:h};
+                    }},
+            ]
+        },
+        mage:{
+            name:'Маг',emoji:'🧙',color:'#9977ff',
+            hp:55,mp:90,atk:5,def:1,crit:.15,dodge:.08,
+            atkMod: p => Math.floor(p.level*1.5 + p.mp/15),
+            defMod: p => Math.floor(p.def + p.level*.5),
+            skills:[
+                {id:'fireball',name:'Огненный шар',icon:'🔥',mp:22,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['Урон ×1.25','Поджигает (D4/ход×3)','AoE: D6 доп. урон'],
+                    desc:'Магия огня D12',
+                    fn(p,e,sk){
+                        const bonus = d(12) + sk.lvl*4;
+                        const dmg = Math.floor(p.atk*2.0 + bonus);
+                        if(sk.lvl>=2) e.burnStack=(e.burnStack||0)+3;
+                        return {dmg, msg:`🔥 Огненный шар: ${dmg} урона!${sk.lvl>=2?' 🔥Поджог!':''}`};
+                    }},
+                {id:'arcane',name:'Аркан. щит',icon:'🔮',mp:18,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['Щит+D8','Также +15 MP','Отражает 30% урона'],
+                    desc:'HP+D10 и щит',
+                    fn(p,e,sk){
+                        const h = d(10) + sk.lvl*8;
+                        p.hp = Math.min(p.hp+h, p.maxHp);
+                        if(sk.lvl>=2) p.mp = Math.min(p.mp+15, p.maxMp);
+                        if(sk.lvl>=3) p.reflectShield = true;
+                        return {dmg:0, msg:`🔮 Аркан.щит: +${h} HP${sk.lvl>=3?' (отражение)':''}`, heal:h};
+                    }},
+            ]
+        },
+        rogue:{
+            name:'Плут',emoji:'🗡️',color:'#33cc55',
+            hp:65,mp:45,atk:6,def:2,crit:.20,dodge:.16,
+            atkMod: p => Math.floor(p.level*1.3 + p.crit*20),
+            defMod: p => Math.floor(p.def + p.dodge*10),
+            skills:[
+                {id:'backstab',name:'Удар в спину',icon:'🗡️',mp:14,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['Урон ×1.3','Яд D4×3','Тройной удар D6'],
+                    desc:'Крит ×2.5 + D10',
+                    fn(p,e,sk){
+                        const bonus = d(10) + sk.lvl*3;
+                        const dmg = Math.floor(p.atk*2.2 + bonus);
+                        if(sk.lvl>=2) e.poisonStack=(e.poisonStack||0)+3;
+                        const extra = sk.lvl>=3 ? d(6) : 0;
+                        return {dmg:dmg+extra, msg:`🗡️ Удар в спину: ${dmg}${extra?`+${extra}`:''} КРИТ!${sk.lvl>=2?' ☠Яд!':''}`};
+                    }},
+                {id:'smoke',name:'Дымовая завеса',icon:'💨',mp:10,lvl:0,maxLvl:3,cd:0,
+                    upgrades:['Гар.побег + D6 HP','+D8 HP','Оглушает врага 2 хода'],
+                    desc:'Побег + D6 лечение',
+                    fn(p,e,sk){
+                        if(sk.lvl>=1) p.guaranteedFlee=true;
+                        const h = d(6) + sk.lvl*d(6);
+                        p.hp = Math.min(p.hp+h, p.maxHp);
+                        if(sk.lvl>=3) e.stunStack=2;
+                        return {dmg:0, msg:`💨 Дым! +${h} HP${sk.lvl>=3?' Оглушён!':''}`, heal:h};
+                    }},
+            ]
+        }
+    };
+
+    const DIFFS = {
+        easy:{name:'Путешественник',hpM:1.3,enemyM:.7,goldM:1.5,lives:3},
+        normal:{name:'Герой',hpM:1,enemyM:1,goldM:1,lives:1},
+        hard:{name:'Легенда',hpM:.75,enemyM:1.5,goldM:.65,lives:1},
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    //  WORLD MAP
+    // ═══════════════════════════════════════════════════════════
+    const WORLD_COLS = 60, WORLD_ROWS = 42;
+    const TILE = 32;
+    const WT = {WATER:0,GRASS:1,FOREST:2,MOUNTAIN:3,ROAD:4,CITY:5,TOWN:6,DUNGEON:7,TRADER:8,RUINS:9,TEMPLE:10};
+
+    const WORLD_LOCATIONS = [
+        // Cities (with traders AND quest boards)
+        {name:'Аргос — Столица',    type:WT.CITY,   x:14,y:10, emoji:'🏰',desc:'Великая столица. Богатый рынок.',shop:true,questBoard:true},
+        {name:'Порт Зарена',        type:WT.CITY,   x:45,y:6,  emoji:'🏰',desc:'Морской город. Экзотические товары.',shop:true,questBoard:true},
+        {name:'Твердыня Ирон',      type:WT.CITY,   x:7,y:30,  emoji:'🏰',desc:'Город воинов. Лучшее оружие.',shop:true,questBoard:true},
+        {name:'Астрея — Северный форт',type:WT.CITY,x:32,y:8,  emoji:'🏰',desc:'Военный город. Снаряжение.',shop:true,questBoard:true},
+        {name:'Порт Тьмы',          type:WT.CITY,   x:52,y:28, emoji:'🏰',desc:'Тёмный портовый город.',shop:true,questBoard:true},
+        // Towns
+        {name:'Деревня Родник',     type:WT.TOWN,   x:26,y:18, emoji:'🏘️',desc:'Уютная деревня. Лечение и отдых.'},
+        {name:'Посёлок Дальний',    type:WT.TOWN,   x:50,y:22, emoji:'🏘️',desc:'Отдалённый посёлок.'},
+        {name:'Хутор Туманный',     type:WT.TOWN,   x:10,y:20, emoji:'🏘️',desc:'Маленький хутор у гор.'},
+        {name:'Деревня Серпень',    type:WT.TOWN,   x:38,y:30, emoji:'🏘️',desc:'Тихая деревня.'},
+        {name:'Хутор Холмов',       type:WT.TOWN,   x:20,y:35, emoji:'🏘️',desc:'Деревня среди холмов.'},
+        {name:'Стан Охотников',     type:WT.TOWN,   x:55,y:14, emoji:'🏘️',desc:'Лагерь охотников.'},
+        {name:'Рыбачья деревня',    type:WT.TOWN,   x:3,y:38,  emoji:'🏘️',desc:'Рыбаки у реки.'},
+        // Traders (standalone)
+        {name:'Торговец Браун',     type:WT.TRADER, x:20,y:5,  emoji:'🏪',desc:'Опытный торговец.'},
+        {name:'Мистический торговец',type:WT.TRADER,x:40,y:18, emoji:'🏪',desc:'Редкие товары.'},
+        {name:'Странствующий купец',type:WT.TRADER, x:30,y:12, emoji:'🏪',desc:'Заморские товары.'},
+        {name:'Скупщик Гомс',       type:WT.TRADER, x:8,y:38,  emoji:'🏪',desc:'Платит за трофеи.'},
+        {name:'Таинственный продавец',type:WT.TRADER,x:56,y:36,emoji:'🏪',desc:'Торгует странными вещами.'},
+        // Temples
+        {name:'Храм Света',         type:WT.TEMPLE, x:28,y:26, emoji:'⛩️',desc:'Священное место. Полное лечение.'},
+        {name:'Древний алтарь',     type:WT.TEMPLE, x:48,y:12, emoji:'⛩️',desc:'Древний алтарь. Бонус к навыкам.'},
+        {name:'Святилище Огня',     type:WT.TEMPLE, x:16,y:38, emoji:'⛩️',desc:'Огненное святилище.'},
+        {name:'Храм Теней',         type:WT.TEMPLE, x:58,y:40, emoji:'⛩️',desc:'Тёмное место.'},
+        // Dungeons
+        {name:'Пещера Тьмы',        type:WT.DUNGEON,x:5,y:16,  emoji:'🕳️',desc:'Старая пещера. Полна нежити.',floors:4,theme:'cave'},
+        {name:'Замок Ужаса',        type:WT.DUNGEON,x:54,y:8,  emoji:'🏯',desc:'Заброшенный замок.',floors:6,theme:'castle'},
+        {name:'Врата Ада',          type:WT.DUNGEON,x:24,y:36, emoji:'🌋',desc:'Жерло вулкана. Обитель демонов.',floors:7,theme:'hell'},
+        {name:'Древние руины',      type:WT.DUNGEON,x:46,y:34, emoji:'🏚️',desc:'Погребённое королевство.',floors:5,theme:'cave'},
+        {name:'Башня мага',         type:WT.DUNGEON,x:18,y:3,  emoji:'🗼',desc:'Башня безумного архимага.',floors:5,theme:'castle'},
+        {name:'Подземные катакомбы',type:WT.DUNGEON,x:57,y:20, emoji:'⚰️',desc:'Лабиринт смерти.',floors:8,theme:'hell'},
+        {name:'Ледяное подземелье', type:WT.DUNGEON,x:36,y:4,  emoji:'🏔️',desc:'Ледяные пещеры на севере.',floors:5,theme:'cave'},
+        {name:'Проклятый склеп',    type:WT.DUNGEON,x:4,y:24,  emoji:'⚰️',desc:'Древний склеп.',floors:4,theme:'castle'},
+        {name:'Логово дракона',     type:WT.DUNGEON,x:52,y:38, emoji:'🐉',desc:'Гнездо дракона.',floors:6,theme:'hell'},
+        // Ruins
+        {name:'Разрушенный форт',   type:WT.RUINS,  x:34,y:22, emoji:'🏚️',desc:'Разрушенный форт.'},
+        {name:'Старое кладбище',    type:WT.RUINS,  x:12,y:7,  emoji:'⚰️',desc:'Жуткое место.'},
+        {name:'Обломки корабля',    type:WT.RUINS,  x:58,y:30, emoji:'⛵',desc:'Выброшенный на берег корабль.'},
+        {name:'Заброшенная шахта',  type:WT.RUINS,  x:22,y:28, emoji:'⛏️',desc:'Старая шахта.'},
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    //  MONSTERS
+    // ═══════════════════════════════════════════════════════════
+    const WORLD_MONSTERS = [
+        {name:'Дикий волк',  emoji:'🐺',hp:22,atk:7, def:1,xp:15,gold:[2,5], zone:'grass',  color:'#887755'},
+        {name:'Бандит',      emoji:'🦹',hp:30,atk:9, def:3,xp:22,gold:[8,15],zone:'road',   color:'#885544'},
+        {name:'Лесной тролль',emoji:'👹',hp:45,atk:12,def:5,xp:35,gold:[5,12],zone:'forest',color:'#448844'},
+        {name:'Горный великан',emoji:'🧌',hp:60,atk:15,def:8,xp:50,gold:[10,20],zone:'mountain',color:'#776655'},
+    ];
+    const DUNGEON_MONSTERS = [
+        {name:'Крыса',    emoji:'🐀',hp:10,atk:3, def:0,xp:5,  gold:[0,3],  minFloor:1,color:'#886655'},
+        {name:'Скелет',   emoji:'💀',hp:20,atk:5, def:1,xp:12, gold:[2,6],  minFloor:1,color:'#aaaaaa'},
+        {name:'Гоблин',   emoji:'👺',hp:28,atk:7, def:2,xp:22, gold:[3,8],  minFloor:1,color:'#44aa44'},
+        {name:'Зомби',    emoji:'🧟',hp:38,atk:9, def:3,xp:30, gold:[5,12], minFloor:2,color:'#558833'},
+        {name:'Оборотень',emoji:'🐺',hp:55,atk:13,def:5,xp:50, gold:[8,16], minFloor:3,color:'#887755'},
+        {name:'Вампир',   emoji:'🧛',hp:65,atk:16,def:6,xp:65, gold:[12,22],minFloor:3,color:'#882244'},
+        {name:'Демон',    emoji:'👿',hp:80,atk:19,def:8,xp:80, gold:[15,28],minFloor:4,color:'#cc2222'},
+        {name:'Личь',     emoji:'💀',hp:95,atk:22,def:9,xp:100,gold:[20,40],minFloor:5,color:'#9922cc'},
+        {name:'Дракон',   emoji:'🐉',hp:140,atk:28,def:12,xp:150,gold:[40,80],minFloor:6,color:'#dd6600'},
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    //  ITEMS & RARITY
+    // ═══════════════════════════════════════════════════════════
+    const RARITY=[
+        {name:'Обычный',  color:'#9a8870',border:'#2a1a40',chance:52},
+        {name:'Редкий',   color:'#4488ff',border:'#1a4488',chance:28},
+        {name:'Эпический',color:'#bb44ff',border:'#6622aa',chance:15},
+        {name:'Легенд.',  color:'#ffaa00',border:'#885500',chance:5},
+    ];
+    function rollRarity(){
+        let r=rngf()*100,acc=0;
+        for(const rv of RARITY){acc+=rv.chance;if(r<acc)return rv;}
+        return RARITY[0];
+    }
+    function rarMult(r){return {Обычный:1,Редкий:1.35,Эпический:1.8,'Легенд.':2.6}[r.name]||1;}
+    function applyRarity(it,rar){
+        const m=rarMult(rar);
+        const out={...it,rarity:rar};
+        if(out.effect){
+            const ef={};
+            for(const k in out.effect) ef[k]=Math.round(out.effect[k]*m);
+            out.effect=ef;
+            out.desc=Object.entries(ef).map(([k,v])=>`+${v} ${{hp:'HP',mp:'MP',atk:'Атк',def:'Защ',maxHp:'макс.HP',gold:'Зол'}[k]||k}`).join(' ');
+        }
+        return out;
+    }
+    const BASE_ITEMS=[
+        // Consumables
+        {name:'Зелье HP',    emoji:'🧪',type:'consumable',effect:{hp:25},  desc:'+25 HP'},
+        {name:'Зелье маны',  emoji:'💙',type:'consumable',effect:{mp:20},  desc:'+20 MP'},
+        {name:'Свиток лечения',emoji:'📜',type:'consumable',effect:{hp:40},desc:'+40 HP'},
+        // Warrior weapons
+        {name:'Ржавый меч',      emoji:'⚔️',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:3},desc:'+3 Атк [Воин]'},
+        {name:'Боевой топор',    emoji:'🪓',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:5},desc:'+5 Атк [Воин]'},
+        {name:'Моргенштерн',     emoji:'⚙️',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:4,def:1},desc:'+4 Атк +1 Защ [Воин]'},
+        {name:'Пика',            emoji:'🔱',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:6},desc:'+6 Атк [Воин]'},
+        // Mage weapons
+        {name:'Посох мага',      emoji:'🪄',type:'weapon',slot:'weapon',classes:['mage'],effect:{atk:2,mp:15},desc:'+2 Атк +15 MP [Маг]'},
+        {name:'Тёмный жезл',     emoji:'⭐',type:'weapon',slot:'weapon',classes:['mage'],effect:{atk:3,mp:20},desc:'+3 Атк +20 MP [Маг]'},
+        {name:'Посох огня',      emoji:'🔥',type:'weapon',slot:'weapon',classes:['mage'],effect:{atk:5,mp:10},desc:'+5 Атк +10 MP [Маг]'},
+        {name:'Кристальный шар', emoji:'🔮',type:'weapon',slot:'weapon',classes:['mage'],effect:{mp:30},desc:'+30 MP [Маг]'},
+        // Rogue weapons
+        {name:'Кинжал',          emoji:'🗡️',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:3},desc:'+3 Атк [Плут]'},
+        {name:'Отравленный кинжал',emoji:'☠️',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:4},desc:'+4 Атк [Плут]'},
+        {name:'Парные клинки',   emoji:'⚡',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:5},desc:'+5 Атк [Плут]'},
+        {name:'Крюк вора',       emoji:'🪝',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:2,def:2},desc:'+2 Атк +2 Защ [Плут]'},
+        // Universal weapons
+        {name:'Короткий меч',    emoji:'🔪',type:'weapon',slot:'weapon',effect:{atk:2},desc:'+2 Атк'},
+        // Warrior armor
+        {name:'Кожаный нагрудник',emoji:'🥋',type:'armor',slot:'armor',classes:['warrior'],effect:{def:3},desc:'+3 Защ [Воин]'},
+        {name:'Кольчуга',        emoji:'⛓️',type:'armor',slot:'armor',classes:['warrior'],effect:{def:5},desc:'+5 Защ [Воин]'},
+        {name:'Стальные латы',   emoji:'🛡️',type:'armor',slot:'armor',classes:['warrior'],effect:{def:7,maxHp:15},desc:'+7 Защ +15 HP [Воин]'},
+        // Mage armor
+        {name:'Мантия мага',     emoji:'👘',type:'armor',slot:'armor',classes:['mage'],effect:{def:2,mp:20},desc:'+2 Защ +20 MP [Маг]'},
+        {name:'Аркан. роба',     emoji:'🧥',type:'armor',slot:'armor',classes:['mage'],effect:{def:3,mp:30},desc:'+3 Защ +30 MP [Маг]'},
+        // Rogue armor
+        {name:'Плащ тени',       emoji:'🧣',type:'armor',slot:'armor',classes:['rogue'],effect:{def:2},desc:'+2 Защ [Плут]'},
+        {name:'Доспех плута',    emoji:'🦺',type:'armor',slot:'armor',classes:['rogue'],effect:{def:3,maxHp:10},desc:'+3 Защ +10 HP [Плут]'},
+        // Universal armor
+        {name:'Щит',             emoji:'🛡️',type:'armor',slot:'armor',effect:{def:2},desc:'+2 Защ'},
+        // Accessories
+        {name:'Амулет силы',     emoji:'📿',type:'accessory',slot:'accessory',classes:['warrior'],effect:{atk:2,maxHp:10},desc:'+2 Атк +10 HP [Воин]'},
+        {name:'Кольцо мага',     emoji:'💍',type:'accessory',slot:'accessory',classes:['mage'],effect:{mp:20,atk:1},desc:'+20 MP +1 Атк [Маг]'},
+        {name:'Перстень плута',  emoji:'🫧',type:'accessory',slot:'accessory',classes:['rogue'],effect:{atk:1,def:1},desc:'+1 Атк +1 Защ [Плут]'},
+        {name:'Амулет HP',       emoji:'💎',type:'accessory',slot:'accessory',effect:{maxHp:15},desc:'+15 макс. HP'},
+        {name:'Кольцо удачи',    emoji:'🌟',type:'accessory',slot:'accessory',effect:{atk:1,def:1,maxHp:5},desc:'+1/+1/+5HP'},
+        {name:'Ожерелье силы',   emoji:'⚜️',type:'accessory',slot:'accessory',effect:{atk:3},desc:'+3 Атк'},
+        // Gold
+        {name:'Золото',          emoji:'💰',type:'gold',effect:{gold:20},desc:'+20 золота'},
+        {name:'Мешок монет',     emoji:'💰',type:'gold',effect:{gold:35},desc:'+35 золота'},
+    ];
+    const SHOP_ITEMS=[
+        // Consumables
+        {name:'Зелье HP',      emoji:'🧪',type:'consumable',effect:{hp:50},  desc:'+50 HP',  price:25},
+        {name:'Зелье маны',    emoji:'💙',type:'consumable',effect:{mp:45},  desc:'+45 MP',  price:22},
+        {name:'Эликсир HP',    emoji:'🍶',type:'consumable',effect:{hp:90},  desc:'+90 HP',  price:70},
+        {name:'Мана-кристалл', emoji:'🌀',type:'consumable',effect:{mp:75},  desc:'+75 MP',  price:60},
+        {name:'Свиток лечения',emoji:'📜',type:'consumable',effect:{hp:35},  desc:'+35 HP',  price:18},
+        // Warrior gear
+        {name:'Длинный меч',   emoji:'⚔️',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:6},desc:'+6 Атк [Воин]',price:55},
+        {name:'Боевой топор',  emoji:'🪓',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:8},desc:'+8 Атк [Воин]',price:75},
+        {name:'Рыцарские латы',emoji:'🛡️',type:'armor',slot:'armor',classes:['warrior'],effect:{def:8,maxHp:20},desc:'+8 Защ +20 HP [Воин]',price:90},
+        {name:'Щит воина',     emoji:'⛓️',type:'armor',slot:'armor',classes:['warrior'],effect:{def:6},desc:'+6 Защ [Воин]',price:55},
+        // Mage gear
+        {name:'Жезл силы',     emoji:'🪄',type:'weapon',slot:'weapon',classes:['mage'],effect:{atk:5,mp:25},desc:'+5 Атк +25 MP [Маг]',price:70},
+        {name:'Мантия архимага',emoji:'👘',type:'armor',slot:'armor',classes:['mage'],effect:{def:4,mp:40},desc:'+4 Защ +40 MP [Маг]',price:85},
+        // Rogue gear
+        {name:'Парные клинки', emoji:'🗡️',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:7},desc:'+7 Атк [Плут]',price:65},
+        {name:'Кожаный доспех',emoji:'🦺',type:'armor',slot:'armor',classes:['rogue'],effect:{def:5,maxHp:15},desc:'+5 Защ +15 HP [Плут]',price:60},
+        // Universal accessories
+        {name:'Амулет силы',   emoji:'📿',type:'accessory',slot:'accessory',effect:{atk:3,def:2},desc:'+3 Атк +2 Защ',price:80},
+        {name:'Кольцо HP',     emoji:'💍',type:'accessory',slot:'accessory',effect:{maxHp:30},desc:'+30 макс.HP',price:65},
+        {name:'Кольцо маны',   emoji:'🌟',type:'accessory',slot:'accessory',effect:{mp:25,atk:1},desc:'+25 MP +1 Атк',price:55},
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    //  NPC DATA
+    // ═══════════════════════════════════════════════════════════
+    const NPC_TEMPLATES = [
+        {
+            id:'old_farmer', name:'Старый Фермер', emoji:'👴', color:'#aa8855',
+            greeting:'Путник! Беда у меня... Волки повадились на мою ферму.',
+            phrases:['Будь осторожен в лесу — там полно волков!','Говорят, в старых руинах прячется клад.','Мои внуки убежали в город, оставив меня одного...'],
+            questId:'npc_q_wolves',
+        },
+        {
+            id:'lost_knight', name:'Заблудший рыцарь', emoji:'⚔️', color:'#aaaacc',
+            greeting:'Слава богам, живой человек! Бандиты разграбили мой отряд...',
+            phrases:['Никогда не ходи один по этой дороге.','Где-то здесь должна быть крепость. Ты её видел?','Моя броня погребена под обломками замка.'],
+            questId:'npc_q_bandits',
+        },
+        {
+            id:'witch', name:'Лесная Ведьма', emoji:'🧙‍♀️', color:'#cc44cc',
+            greeting:'Хе-хе... Путник забрёл в мои владения. Быть может, поможешь мне?',
+            phrases:['Грибы в этом лесу очень... особенные. Не ешь их.','Вижу в твоих глазах будущее. Много крови.','Мой кот говорит — ты достоин великого оружия.'],
+            questId:'npc_q_undead',
+        },
+        {
+            id:'young_scout', name:'Молодой Разведчик', emoji:'🏹', color:'#44cc88',
+            greeting:'Эй! Мне нужна помощь — я должен доложить о монстрах, но сам не справлюсь.',
+            phrases:['Я слышал, в пещерах завелось что-то огромное.','Армия монстров движется с севера!','Учи меня драться — я ещё новичок.'],
+            questId:'npc_q_scouting',
+        },
+        {
+            id:'merchant_guard', name:'Охранник обоза', emoji:'💂', color:'#cc8833',
+            greeting:'Наш обоз атаковали. Половина товара разграблена бандитами.',
+            phrases:['Охрана стоит дорого — но без неё никуда.','Слышал, что в горах видели дракона. Брехня!','Торговый путь становится всё опаснее.'],
+            questId:'npc_q_escort',
+        },
+        {
+            id:'cursed_noble', name:'Проклятый дворянин', emoji:'🎩', color:'#9944aa',
+            greeting:'Я... не могу войти в город. Меня прокляли. Пожалуйста, помогите...',
+            phrases:['Лич украл что-то важное из моей семьи.','Говорят, в катакомбах под замком хранится книга снятия проклятий.','Я заплачу всем золотом, что у меня есть.'],
+            questId:'npc_q_lich',
+        },
+        {
+            id:'blacksmith', name:'Кузнец-беженец', emoji:'🔨', color:'#cc6633',
+            greeting:'Мою кузницу сожгли тролли. Если победишь их, я выкую тебе что-нибудь особенное!',
+            phrases:['Лучший металл — это трофейные когти дракона.','Я могу починить любое оружие. Было бы чем.','Огонь троллей — самый горячий в мире. Мастерство!'],
+            questId:'npc_q_trolls',
+        },
+        {
+            id:'pilgrim', name:'Странник-паломник', emoji:'🚶', color:'#8888aa',
+            greeting:'Дорогой путник, я иду к Храму Света, но не знаю безопасного пути.',
+            phrases:['Вера хранит меня в пути. Тебя тоже?','Говорят, в Храме Света можно найти ответы на любые вопросы.','Эти земли полны зла. Но добро победит.'],
+            questId:null,
+        },
+        {
+            id:'treasure_hunter', name:'Охотник за кладами', emoji:'🗺️', color:'#ddaa22',
+            greeting:'Ш-ш-ш! Не шуми! Я нашёл карту к сокровищу! Помоги достать — поделюсь!',
+            phrases:['Каждые руины хранят тайну. Надо только знать, где копать.','Этот амулет? Нашёл в старом кургане. Не советую туда ходить.','Главное сокровище — знания о том, где копать.'],
+            questId:'npc_q_treasure',
+        },
+    ];
+
+    // NPC-specific quests (with item rewards)
+    const NPC_QUESTS = [
+        {
+            id:'npc_q_wolves', name:'Защити ферму', emoji:'🐺',
+            desc:'Убей 4 диких волка, терроризирующих ферму.',
+            type:'kill', target:'Дикий волк', count:4,
+            reward:{gold:50, xp:60, item:{name:'Охотничий лук',emoji:'🏹',type:'weapon',slot:'weapon',classes:['rogue'],effect:{atk:5},desc:'+5 Атк [Плут]',rarity:RARITY[1]}},
+            rewardDesc:'50💰 + 60XP + 🏹 Охотничий лук [Редкий]',
+        },
+        {
+            id:'npc_q_bandits', name:'Месть рыцаря', emoji:'🦹',
+            desc:'Расправься с 3 бандитами на дороге.',
+            type:'kill', target:'Бандит', count:3,
+            reward:{gold:80, xp:70, item:{name:'Рыцарский меч',emoji:'⚔️',type:'weapon',slot:'weapon',classes:['warrior'],effect:{atk:7},desc:'+7 Атк [Воин]',rarity:RARITY[1]}},
+            rewardDesc:'80💰 + 70XP + ⚔️ Рыцарский меч [Редкий]',
+        },
+        {
+            id:'npc_q_undead', name:'Очистить склеп', emoji:'💀',
+            desc:'Уничтожь 4 скелета или зомби в подземельях.',
+            type:'kill_multi', targets:['Скелет','Зомби'], count:4,
+            reward:{gold:70, xp:80, item:{name:'Посох Ведьмы',emoji:'🪄',type:'weapon',slot:'weapon',classes:['mage'],effect:{atk:4,mp:25},desc:'+4 Атк +25 MP [Маг]',rarity:RARITY[2]}},
+            rewardDesc:'70💰 + 80XP + 🪄 Посох Ведьмы [Эпический]',
+        },
+        {
+            id:'npc_q_scouting', name:'Разведка подземелья', emoji:'🗺️',
+            desc:'Исследуй 2 этажа любого подземелья.',
+            type:'floors', count:2,
+            reward:{gold:90, xp:75, item:{name:'Плащ Разведчика',emoji:'🧣',type:'armor',slot:'armor',classes:['rogue'],effect:{def:4},desc:'+4 Защ [Плут]',rarity:RARITY[1]}},
+            rewardDesc:'90💰 + 75XP + 🧣 Плащ Разведчика [Редкий]',
+        },
+        {
+            id:'npc_q_escort', name:'Найти бандитов', emoji:'💂',
+            desc:'Убей 2 бандитов, ограбивших обоз.',
+            type:'kill', target:'Бандит', count:2,
+            reward:{gold:100, xp:65, item:{name:'Кольцо Защиты',emoji:'💍',type:'accessory',slot:'accessory',effect:{def:3,maxHp:20},desc:'+3 Защ +20 HP',rarity:RARITY[1]}},
+            rewardDesc:'100💰 + 65XP + 💍 Кольцо Защиты [Редкий]',
+        },
+        {
+            id:'npc_q_lich', name:'Победить Лича', emoji:'👿',
+            desc:'Найди и победи Лича в подземельях.',
+            type:'kill', target:'Личь', count:1,
+            reward:{gold:200, xp:180, item:{name:'Оберег от проклятий',emoji:'⚜️',type:'accessory',slot:'accessory',effect:{atk:2,def:2,maxHp:25},desc:'+2 Атк +2 Защ +25 HP',rarity:RARITY[2]}},
+            rewardDesc:'200💰 + 180XP + ⚜️ Оберег от проклятий [Эпический]',
+        },
+        {
+            id:'npc_q_trolls', name:'Месть троллям', emoji:'👹',
+            desc:'Убей 2 лесных тролля за кузнеца.',
+            type:'kill', target:'Лесной тролль', count:2,
+            reward:{gold:120, xp:110, item:{name:'Кузнечная броня',emoji:'⛓️',type:'armor',slot:'armor',classes:['warrior'],effect:{def:7,maxHp:25},desc:'+7 Защ +25 HP [Воин]',rarity:RARITY[2]}},
+            rewardDesc:'120💰 + 110XP + ⛓️ Кузнечная броня [Эпический]',
+        },
+        {
+            id:'npc_q_treasure', name:'Тайник в руинах', emoji:'💰',
+            desc:'Набери 200 золота — докажи, что ты достойный авантюрист.',
+            type:'gold_total', count:200,
+            reward:{gold:80, xp:60, item:{name:'Кольцо Авантюриста',emoji:'🌟',type:'accessory',slot:'accessory',effect:{atk:2,def:1,maxHp:15},desc:'+2 Атк +1 Защ +15 HP',rarity:RARITY[1]}},
+            rewardDesc:'80💰 + 60XP + 🌟 Кольцо Авантюриста [Редкий]',
+        },
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    //  QUESTS
+    // ═══════════════════════════════════════════════════════════
+    const QUEST_POOL = [
+        {id:'q_wolf',    name:'Охота на волков',   emoji:'🐺',desc:'Убей 3 диких волка в лесу.',type:'kill',target:'Дикий волк',count:3,reward:{gold:60,xp:50}},
+        {id:'q_goblin',  name:'Гоблинская угроза', emoji:'👺',desc:'Уничтожь 3 гоблина в подземелье.',type:'kill',target:'Гоблин',count:3,reward:{gold:80,xp:70}},
+        {id:'q_bandit',  name:'Бандиты на дороге', emoji:'🦹',desc:'Расправься с 2 бандитами.',type:'kill',target:'Бандит',count:2,reward:{gold:70,xp:60}},
+        {id:'q_skeleton',name:'Кости в пыль',      emoji:'💀',desc:'Разруши 3 скелета.',type:'kill',target:'Скелет',count:3,reward:{gold:65,xp:55}},
+        {id:'q_zombie',  name:'Мёртвые не спят',   emoji:'🧟',desc:'Уничтожь 2 зомби.',type:'kill',target:'Зомби',count:2,reward:{gold:90,xp:80}},
+        {id:'q_troll',   name:'Тролль на перевале',emoji:'👹',desc:'Убей лесного тролля.',type:'kill',target:'Лесной тролль',count:1,reward:{gold:120,xp:100}},
+        {id:'q_giant',   name:'Великан с гор',     emoji:'🧌',desc:'Победи горного великана.',type:'kill',target:'Горный великан',count:1,reward:{gold:150,xp:130}},
+        {id:'q_vampire', name:'Проклятье вампира',  emoji:'🧛',desc:'Уничтожь вампира.',type:'kill',target:'Вампир',count:1,reward:{gold:180,xp:150}},
+        {id:'q_floor',   name:'Разведчик',          emoji:'🗺️',desc:'Исследуй 3 этажа подземелья.',type:'floors',count:3,reward:{gold:100,xp:90}},
+        {id:'q_loot',    name:'Охотник за сокровищами',emoji:'💰',desc:'Собери 150 золота.',type:'gold',count:150,reward:{gold:50,xp:40}},
+    ];
+
+    function getAvailableQuests(){
+        const taken=activeQuests.map(q=>q.id);
+        const done=completedQuests.map(q=>q.id);
+        return QUEST_POOL.filter(q=>!taken.includes(q.id)&&!done.includes(q.id));
+    }
+    function takeQuest(q){
+        activeQuests.push({...q,progress:0});
+        log(`📋 Взят квест: ${q.name}`,'level');
+    }
+    function updateQuestProgress(type, value){
+        for(const q of activeQuests){
+            let advanced=false;
+            if(type==='kill'){
+                if(q.type==='kill'&&q.target===value){ q.progress++; advanced=true; }
+                if(q.type==='kill_multi'&&q.targets&&q.targets.includes(value)){ q.progress++; advanced=true; }
+            } else if(type==='floors'&&q.type==='floors'){ q.progress++; advanced=true; }
+            else if(type==='gold'&&q.type==='gold'){ q.progress++; advanced=true; }
+            else if(type==='gold_total'&&q.type==='gold_total'){
+                q.progress=player.gold; advanced=true;
+            }
+            if(advanced && q.progress>=q.count) { completeQuest(q); return; }
+        }
+        // also check gold_total passively
+        for(const q of activeQuests){
+            if(q.type==='gold_total'){ q.progress=player.gold; if(q.progress>=q.count){completeQuest(q);return;} }
+        }
+    }
+    function completeQuest(q){
+        activeQuests=activeQuests.filter(x=>x.id!==q.id);
+        completedQuests.push(q);
+        player.gold+=q.reward.gold;
+        player.xp+=q.reward.xp;
+        let rewardMsg=`+${q.reward.gold}💰 +${q.reward.xp}XP`;
+        if(q.reward.item){
+            const it={...q.reward.item};
+            if(player.inventory.length<MAX_INV){
+                player.inventory.push(it);
+                rewardMsg+=` + ${it.emoji} ${it.name}`;
+                log(`${it.emoji} Получен предмет: ${it.name} [${it.rarity?.name||''}] (${it.desc})`,'loot');
+            } else {
+                // Drop on ground
+                const px=player.x+rng(-2,2), py=player.y+rng(-2,2);
+                worldItems.push({...it,x:clamp(px,0,WORLD_COLS-1),y:clamp(py,0,WORLD_ROWS-1)});
+                rewardMsg+=` + ${it.emoji} ${it.name} (на земле!)`;
+            }
+        }
+        log(`🏆 Квест выполнен: ${q.name}! ${rewardMsg}`,'level');
+        addFX(player.x,player.y,'КВЕСТ!','#ffdd00');
+        checkLevelUp();
+        updateUI();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  STATE
+    // ═══════════════════════════════════════════════════════════
+    let player = null;
+    let diff = null;
+    let gameMode = 'world'; // 'world' | 'dungeon'
+    let worldMap = null;
+    let worldMonsters = [];
+    let worldItems = [];
+    let wCam = {x:0, y:0}; // camera top-left in tiles
+    let dMap = null, dMonsters = [], dItems = [], dTraps = [], dVis = null;
+    let dChests = []; // dungeon chests
+    let dCam = {x:0, y:0};
+    let floorNum = 1;
+    let currentDungeon = null;
+    let effects = [], particles = [];
+    let inCombat = false, combatEnemy = null, playerTurn = true;
+    let pendingDungLoc = null;
+    let shopItems = [];
+    let shopOpen = false;
+    let shopMode = 'buy';
+    let movePoints = 0;      // remaining steps this turn
+    let diceRolled = false;  // has player rolled dice this turn
+    let combatPhase = 'choose'; // 'choose' | 'rolling' | 'result'
+    let pendingAction = null; // combat action waiting for dice
+    let activeQuests = [];
+    let completedQuests = [];
+    let pendingChest = null; // chest waiting for dice roll
+    let worldNPCs = [];
+    let npcDialogOpen = false;
+    const MAX_INV = 30;
+
+    // ── Canvas & viewport ──
+    const mapCanvas = $('map-canvas');
+    const ctx = mapCanvas.getContext('2d');
+    const miniCv = $('minimap');
+    const mctx = miniCv.getContext('2d');
+
+    function resizeCanvas(){
+        const wrap = $('map-wrap');
+        mapCanvas.width  = wrap.clientWidth;
+        mapCanvas.height = wrap.clientHeight;
+        miniCv.width = $('sidebar-right').clientWidth - 20;
+        if(player) render();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // ── Visible tiles ──
+    function visCols(){return Math.ceil(mapCanvas.width/TILE)+2;}
+    function visRows(){return Math.ceil(mapCanvas.height/TILE)+2;}
+
+    // ═══════════════════════════════════════════════════════════
+    //  SCREEN NAV
+    // ═══════════════════════════════════════════════════════════
+    function showScreen(id){
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));
+        $(id).classList.add('show');
+        if(id==='s-game') setTimeout(resizeCanvas,50);
+    }
+    function selectClass(cls){
+        window._pendingClass = cls;
+        showScreen('s-diff');
+    }
+    function startGame(diffKey){
+        diff = DIFFS[diffKey];
+        const C = CLASSES[window._pendingClass];
+        const hpBase = Math.floor(C.hp * diff.hpM);
+        player = {
+            x:26, y:18, // start at Деревня Родник
+            hp:hpBase, maxHp:hpBase,
+            mp:C.mp, maxMp:C.mp,
+            atk:C.atk, def:C.def,
+            baseAtk:C.atk, baseDef:C.def,
+            crit:C.crit, dodge:C.dodge,
+            xp:0, xpNext:30, level:1, gold:15,
+            inventory:[], equipped:{weapon:null,armor:null,accessory:null},
+            skills:C.skills.map(s=>({...s,cd:0})),
+            skillPoints:0,
+            blocking:false, guaranteedFlee:false, reflectShield:false,
+            statuses:{poison:0,burn:0,stun:0},
+            cls:window._pendingClass, classData:C,
+            lives:diff.lives,
+        };
+        effects=[]; particles=[];
+        activeQuests=[]; completedQuests=[];
+        worldNPCs=[]; npcDialogOpen=false;
+        gameMode='world';
+        worldMap = generateWorldMap();
+        spawnWorldMonsters();
+        spawnWorldNPCs();
+        initWorldExplored();
+        updateWorldFOV();
+        diceRolled=false; movePoints=0;
+        showScreen('s-game');
+        // Use innerHTML to preserve the inner span
+        $('hero-lbl').innerHTML = `${C.emoji} ${C.name} <span id="diff-badge" style="color:#4a3860">${diff.name}</span>`;
+        buildSkillsUI();
+        updateUI();
+        log(`⚔ ${C.name} [${diff.name}] вступает в Средиземье!`,'info');
+        log('Брось кубики чтобы начать ход. Исследуй мир!','info');
+        centerCamOn(player.x, player.y);
+        render();
+    }
+    function backToMenu(){
+        $('endgame-ov').style.display='none';
+        $('combat-ov').style.display='none';
+        inCombat=false; shopOpen=false;
+        showScreen('s-menu');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  WORLD MAP GENERATION
+    // ═══════════════════════════════════════════════════════════
+    function generateWorldMap(){
+        // Simple noise
+        const m=[];
+        // Use simple layered generation
+        for(let y=0;y<WORLD_ROWS;y++){
+            const row=[];
+            for(let x=0;x<WORLD_COLS;x++){
+                if(x===0||y===0||x===WORLD_COLS-1||y===WORLD_ROWS-1){row.push(WT.WATER);continue;}
+                // Perlin-ish: sum of sin waves
+                const nx=x/WORLD_COLS, ny=y/WORLD_ROWS;
+                const n = Math.sin(nx*8.3+ny*5.1)*Math.cos(nx*3.7+ny*9.2)*0.5+0.5
+                    +Math.sin(nx*17+ny*13)*0.25;
+                if(n<.3) row.push(WT.WATER);
+                else if(n<.45) row.push(WT.GRASS);
+                else if(n<.6) row.push(WT.FOREST);
+                else if(n<.72) row.push(WT.GRASS);
+                else if(n<.83) row.push(WT.MOUNTAIN);
+                else row.push(WT.GRASS);
+            }
+            m.push(row);
+        }
+        // Carve roads between cities
+        const cities=WORLD_LOCATIONS.filter(l=>l.type===WT.CITY||l.type===WT.TOWN);
+        for(let i=1;i<cities.length;i++){
+            carveRoad(m, cities[i-1].x,cities[i-1].y, cities[i].x,cities[i].y);
+        }
+        // Place all locations
+        for(const loc of WORLD_LOCATIONS){
+            m[loc.y][loc.x] = loc.type;
+        }
+        return m;
+    }
+    function carveRoad(m,x1,y1,x2,y2){
+        let cx=x1,cy=y1;
+        while(cx!==x2){
+            if(cy>0&&cy<WORLD_ROWS&&cx>0&&cx<WORLD_COLS&&m[cy][cx]!==WT.WATER)m[cy][cx]=WT.ROAD;
+            cx+=cx<x2?1:-1;
+        }
+        while(cy!==y2){
+            if(cy>0&&cy<WORLD_ROWS&&cx>0&&cx<WORLD_COLS&&m[cy][cx]!==WT.WATER)m[cy][cx]=WT.ROAD;
+            cy+=cy<y2?1:-1;
+        }
+    }
+
+    function spawnWorldMonsters(){
+        worldMonsters=[];
+        const zoneMap={
+            [WT.GRASS]:'grass', [WT.FOREST]:'forest',
+            [WT.MOUNTAIN]:'mountain', [WT.ROAD]:'road',
+        };
+        let tries=0;
+        while(worldMonsters.length<45&&tries<3000){
+            tries++;
+            const mx=rng(1,WORLD_COLS-2), my=rng(1,WORLD_ROWS-2);
+            const tile=worldMap[my][mx];
+            const zone=zoneMap[tile];
+            if(!zone) continue;
+            if(Math.abs(mx-player.x)<4&&Math.abs(my-player.y)<4) continue;
+            if(worldMonsters.find(m=>m.x===mx&&m.y===my)) continue;
+            const candidates=WORLD_MONSTERS.filter(m=>m.zone===zone||m.zone==='any');
+            if(!candidates.length) continue;
+            const mt=candidates[rng(0,candidates.length-1)];
+            worldMonsters.push({...mt,maxHp:mt.hp,hp:mt.hp,x:mx,y:my,id:Math.random(),
+                poisonStack:0,burnStack:0,stunStack:0,moving:true});
+        }
+    }
+
+    function spawnWorldNPCs(){
+        worldNPCs=[];
+        const zones=[WT.GRASS,WT.ROAD,WT.FOREST];
+        let tries=0;
+        const shuffled=[...NPC_TEMPLATES].sort(()=>rngf()-.5);
+        for(const tmpl of shuffled){
+            if(worldNPCs.length>=8) break;
+            for(let t=0;t<200;t++){
+                tries++;
+                const mx=rng(2,WORLD_COLS-3), my=rng(2,WORLD_ROWS-3);
+                const tile=worldMap[my][mx];
+                if(!zones.includes(tile)) continue;
+                if(Math.abs(mx-player.x)<5&&Math.abs(my-player.y)<5) continue;
+                if(worldNPCs.find(n=>Math.abs(n.x-mx)<3&&Math.abs(n.y-my)<3)) continue;
+                if(worldMonsters.find(m=>m.x===mx&&m.y===my)) continue;
+                worldNPCs.push({
+                    ...tmpl, x:mx, y:my, id:Math.random(),
+                    talked:false,
+                    questGiven:false,
+                });
+                break;
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  DICE SYSTEM — WORLD MOVEMENT
+    // ═══════════════════════════════════════════════════════════
+    let moveAnim = null; // pending D6 animation
+
+    function rollMoveDice(){
+        if(inCombat||shopOpen||diceRolled) return;
+        const dieEl = $('die-move');
+        const bonEl = $('die-bonus');
+        dieEl.classList.add('rolling');
+        bonEl.classList.add('rolling');
+        $('roll-btn').disabled = true;
+
+        // Animate for visual effect
+        let ticks=0;
+        const interval = setInterval(()=>{
+            dieEl.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][rng(0,5)];
+            bonEl.textContent = ['⚀','⚁','⚂','⚃'][rng(0,3)];
+            if(++ticks>=8){
+                clearInterval(interval);
+                const d6=rollD6(), d4=rollD4();
+                dieEl.classList.remove('rolling');
+                bonEl.classList.remove('rolling');
+                dieEl.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][d6-1];
+                bonEl.textContent=['⚀','⚁','⚂','⚃'][d4-1];
+                dieEl.style.borderColor='#c9913a';
+                bonEl.style.borderColor='#c9913a';
+                movePoints = d6 + d4;
+                diceRolled = true;
+                const total = d6 + d4;
+                $('dice-info').textContent = `D6=${d6} + D4=${d4} = ${total} шагов!`;
+                $('move-ind').style.display='block';
+                $('move-ind').textContent=`🎲 Осталось шагов: ${movePoints}`;
+                log(`🎲 Бросок кубиков: D6=${d6} + D4=${d4} = ${total} шагов!`,'dice');
+                updateTurnTxt();
+            }
+        }, 60);
+    }
+
+    function endTurn(){
+        diceRolled=false;
+        movePoints=0;
+        $('roll-btn').disabled=false;
+        $('roll-btn').textContent='🎲 Бросить кубики';
+        $('die-move').style.borderColor='';
+        $('die-bonus').style.borderColor='';
+        $('dice-info').textContent='Брось кубики чтобы начать следующий ход';
+        $('move-ind').style.display='none';
+        // Move world monsters
+        tickWorldMonsters();
+        updateTurnTxt();
+    }
+
+    function updateTurnTxt(){
+        const el=$('turn-txt');
+        if(!el) return;
+        if(!diceRolled) el.textContent = 'Ход: бросьте кубики';
+        else el.textContent = `Шагов осталось: ${movePoints}`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  WORLD MONSTER AI
+    // ═══════════════════════════════════════════════════════════
+    function tickWorldMonsters(){
+        for(const m of worldMonsters){
+            if(!m.moving) continue;
+            const dist = Math.abs(m.x-player.x)+Math.abs(m.y-player.y);
+            if(dist<=5){
+                // Chase player
+                const dx=Math.sign(player.x-m.x), dy=Math.sign(player.y-m.y);
+                if(rngf()<.5){
+                    if(dx!==0&&canWorldMove(m.x+dx,m.y)) m.x+=dx;
+                    else if(dy!==0&&canWorldMove(m.x,m.y+dy)) m.y+=dy;
+                } else {
+                    if(dy!==0&&canWorldMove(m.x,m.y+dy)) m.y+=dy;
+                    else if(dx!==0&&canWorldMove(m.x+dx,m.y)) m.x+=dx;
+                }
+            } else {
+                // Wander
+                const dirs=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+                const d=dirs[rng(0,3)];
+                if(canWorldMove(m.x+d.x,m.y+d.y)){m.x+=d.x;m.y+=d.y;}
+            }
+        }
+        render();
+    }
+    function canWorldMove(x,y){
+        if(x<0||y<0||x>=WORLD_COLS||y>=WORLD_ROWS) return false;
+        const t=worldMap[y][x];
+        if(t===WT.WATER) return false;
+        if(worldMonsters.find(m=>m.x===x&&m.y===y)) return false;
+        if(worldNPCs.find(n=>n.x===x&&n.y===y)) return false;
+        return true;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CAMERA
+    // ═══════════════════════════════════════════════════════════
+    function centerCamOn(tx,ty){
+        const cols=gameMode==='world'?WORLD_COLS:18;
+        const rows=gameMode==='world'?WORLD_ROWS:18;
+        const vcols=visCols(), vrows=visRows();
+        const cam=gameMode==='world'?wCam:dCam;
+        cam.x = clamp(tx - Math.floor(vcols/2), 0, Math.max(0,cols-vcols));
+        cam.y = clamp(ty - Math.floor(vrows/2), 0, Math.max(0,rows-vrows));
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  MOVEMENT
+    // ═══════════════════════════════════════════════════════════
+    function tryMove(dx,dy){
+        if(inCombat||shopOpen||npcDialogOpen||fullInvOpen) return;
+        if(gameMode==='world'){
+            if(!diceRolled||movePoints<=0){
+                log('Сначала брось кубики! 🎲','info');
+                return;
+            }
+            const nx=player.x+dx, ny=player.y+dy;
+            if(nx<0||ny<0||nx>=WORLD_COLS||ny>=WORLD_ROWS) return;
+            const tile=worldMap[ny][nx];
+            if(tile===WT.WATER){log('Нельзя идти по воде.','info');return;}
+            // Check monster encounter
+            const m=worldMonsters.find(m=>m.x===nx&&m.y===ny);
+            if(m){startCombat(m,true);return;}
+            // Check NPC encounter
+            const npc=worldNPCs.find(n=>n.x===nx&&n.y===ny);
+            if(npc){openNpcDialog(npc);return;}
+            player.x=nx; player.y=ny;
+            movePoints--;
+            $('move-ind').textContent=`🎲 Осталось шагов: ${movePoints}`;
+            if(movePoints<=0) endTurn();
+            updateWorldFOV();
+            // Location checks
+            handleWorldStep();
+            centerCamOn(player.x, player.y);
+            render(); updateUI();
+        } else {
+            // Dungeon — always can move
+            const nx=player.x+dx, ny=player.y+dy;
+            if(!isDungFloor(nx,ny)) return;
+            const m=dMonsters.find(m=>m.x===nx&&m.y===ny);
+            if(m){startCombat(m,false);return;}
+            player.x=nx; player.y=ny;
+            updateDungFOV();
+            handleDungeonStep();
+            centerCamOn(player.x, player.y);
+            render(); updateUI();
+        }
+    }
+
+    function handleWorldStep(){
+        const loc=WORLD_LOCATIONS.find(l=>l.x===player.x&&l.y===player.y);
+        if(!loc) return;
+        if(loc.type===WT.DUNGEON){
+            showDungPrompt(loc); return;
+        }
+        if(loc.type===WT.TRADER||loc.type===WT.CITY){
+            openShop(loc.name, loc.questBoard); return;
+        }
+        if(loc.type===WT.TOWN){
+            const h=Math.floor(player.maxHp*.35), mp=Math.floor(player.maxMp*.35);
+            player.hp=Math.min(player.hp+h, player.maxHp);
+            player.mp=Math.min(player.mp+mp, player.maxMp);
+            addFX(player.x,player.y,`+${h}❤ +${mp}💧`,'#44ff44');
+            log(`🏘️ ${loc.name}: +${h} HP, +${mp} MP`,'heal');
+        }
+        if(loc.type===WT.TEMPLE){
+            player.hp=player.maxHp; player.mp=player.maxMp;
+            addFX(player.x,player.y,'✨ ИСЦЕЛЁН!','#ffdd44');
+            log(`⛩️ ${loc.name}: Полное исцеление!`,'heal');
+        }
+        if(loc.type===WT.RUINS){
+            if(rngf()<.6){
+                const dmg=rng(8,20);
+                player.hp=Math.max(1,player.hp-dmg);
+                addFX(player.x,player.y,`💀-${dmg}`,'#ff4400');
+                log(`🏚️ ${loc.name}: Ловушка! -${dmg} HP`,'dmg');
+            } else {
+                const g=rng(15,40);
+                player.gold+=g;
+                log(`🏚️ ${loc.name}: Нашёл ${g}💰!`,'loot');
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  DUNGEON
+    // ═══════════════════════════════════════════════════════════
+    const DT={WALL:0,FLOOR:1,STAIRS:2,TRAP:3};
+    const DUNG_SIZE=18;
+
+    function showDungPrompt(loc){
+        pendingDungLoc=loc;
+        $('dp-title').textContent=`${loc.emoji} ${loc.name}`;
+        $('dp-desc').textContent=`${loc.desc} (${loc.floors} этажей)`;
+        $('dung-prompt').classList.add('open');
+    }
+    function closeDungPrompt(){
+        $('dung-prompt').classList.remove('open');
+        pendingDungLoc=null;
+    }
+    function enterDungeon(){
+        if(!pendingDungLoc) return;
+        const loc = pendingDungLoc; // save BEFORE closeDungPrompt nulls it
+        closeDungPrompt();
+        currentDungeon = loc;
+        gameMode='dungeon';
+        floorNum=1;
+        diceRolled=true; movePoints=999;
+        const mi=$('move-ind'); if(mi) mi.style.display='none';
+        const rb=$('roll-btn'); if(rb) rb.disabled=true;
+        const di=$('dice-info'); if(di) di.textContent='В подземелье — двигайся свободно!';
+        const dm=$('die-move'); if(dm) dm.style.borderColor='#5544aa';
+        log(`⚔ Входишь в: ${currentDungeon.name}`,'info');
+        generateDungFloor();
+        updateUI(); render();
+    }
+    function exitDungeon(){
+        gameMode='world';
+        currentDungeon=null;
+        diceRolled=false; movePoints=0;
+        const rb=$('roll-btn'); if(rb) rb.disabled=false;
+        const di=$('dice-info'); if(di) di.textContent='Брось кубики чтобы начать ход';
+        const dm=$('die-move'); if(dm) dm.style.borderColor='';
+        if(player) player.hp=Math.min(player.hp, player.maxHp); // no restore on exit
+        log('Ты покинул подземелье.','info');
+        centerCamOn(player.x, player.y);
+        render(); updateUI();
+    }
+
+    const DTHEMES={
+        cave:{wall:'#0e0810',wallH:'#180e20',floor1:'#100a18',floor2:'#0d0814',stair:'#c9913a'},
+        castle:{wall:'#100c08',wallH:'#1c1610',floor1:'#131008',floor2:'#0f0e06',stair:'#c9913a'},
+        hell:{wall:'#160606',wallH:'#240a08',floor1:'#110406',floor2:'#0e0304',stair:'#cc4400'},
+    };
+    function dTheme(){return DTHEMES[currentDungeon?.theme||'cave']||DTHEMES.cave;}
+
+    function generateDungFloor(){
+        const sz=DUNG_SIZE;
+        const m=Array.from({length:sz},()=>Array(sz).fill(DT.WALL));
+        const rooms=[];
+        function addRoom(x,y,w,h){
+            for(let ry=y;ry<y+h;ry++)
+                for(let rx=x;rx<x+w;rx++)
+                    if(ry>0&&ry<sz-1&&rx>0&&rx<sz-1)m[ry][rx]=DT.FLOOR;
+            rooms.push({cx:x+Math.floor(w/2),cy:y+Math.floor(h/2)});
+        }
+        function corridor(x1,y1,x2,y2){
+            let cx=x1,cy=y1;
+            while(cx!==x2){if(cy>0&&cy<sz&&cx>0&&cx<sz)m[cy][cx]=DT.FLOOR;cx+=cx<x2?1:-1;}
+            while(cy!==y2){if(cy>0&&cy<sz&&cx>0&&cx<sz)m[cy][cx]=DT.FLOOR;cy+=cy<y2?1:-1;}
+        }
+        for(let i=0;i<rng(6,10);i++){
+            const w=rng(3,6),h=rng(3,5),x=rng(1,sz-w-1),y=rng(1,sz-h-1);
+            if(!rooms.some(r=>Math.abs(x-r.cx)<w+2&&Math.abs(y-r.cy)<h+2))addRoom(x,y,w,h);
+        }
+        if(rooms.length<2){addRoom(1,1,5,4);addRoom(10,10,5,4);}
+        for(let i=1;i<rooms.length;i++)corridor(rooms[i-1].cx,rooms[i-1].cy,rooms[i].cx,rooms[i].cy);
+
+        if(floorNum<currentDungeon.floors){
+            const last=rooms[rooms.length-1];
+            m[last.cy][last.cx]=DT.STAIRS;
+        }
+        dMap=m;
+        dVis=Array.from({length:sz},()=>Array(sz).fill(false));
+        player.x=rooms[0].cx; player.y=rooms[0].cy;
+
+        // Monsters
+        const avail=DUNGEON_MONSTERS.filter(mt=>mt.minFloor<=floorNum);
+        dMonsters=[];
+        for(let i=0;i<rng(4+floorNum,8+floorNum*2);i++){
+            for(let t=0;t<80;t++){
+                const mx=rng(1,sz-2),my=rng(1,sz-2);
+                if(m[my][mx]===DT.FLOOR&&!(mx===player.x&&my===player.y)&&!dMonsters.find(x=>x.x===mx&&x.y===my)){
+                    const mt=avail[rng(0,avail.length-1)];
+                    const sc=(1+(floorNum-1)*.28)*diff.enemyM;
+                    dMonsters.push({...mt,maxHp:Math.floor(mt.hp*sc),hp:Math.floor(mt.hp*sc),
+                        x:mx,y:my,id:Math.random(),poisonStack:0,burnStack:0,stunStack:0});
+                    break;
+                }
+            }
+        }
+        // Items
+        dItems=[];
+        for(let i=0;i<rng(3,6);i++){
+            for(let t=0;t<80;t++){
+                const ix=rng(1,sz-2),iy=rng(1,sz-2);
+                if(m[iy][ix]===DT.FLOOR&&!dItems.find(x=>x.x===ix&&x.y===iy)){
+                    const base=BASE_ITEMS[rng(0,BASE_ITEMS.length-1)];
+                    dItems.push({...applyRarity(base,rollRarity()),x:ix,y:iy});
+                    break;
+                }
+            }
+        }
+        // Traps
+        dTraps=[];
+        for(let i=0;i<rng(2,3+floorNum);i++){
+            for(let t=0;t<80;t++){
+                const tx=rng(1,sz-2),ty=rng(1,sz-2);
+                if(m[ty][tx]===DT.FLOOR&&!dTraps.find(x=>x.x===tx&&x.y===ty)&&!(tx===player.x&&ty===player.y)){
+                    dTraps.push({x:tx,y:ty,triggered:false,dmg:rng(8,14+floorNum*2),altar:rngf()<.28});
+                    break;
+                }
+            }
+        }
+        // Chests
+        dChests=[];
+        for(let i=0;i<rng(1,3);i++){
+            for(let t=0;t<80;t++){
+                const cx=rng(1,sz-2),cy=rng(1,sz-2);
+                if(m[cy][cx]===DT.FLOOR&&!dChests.find(x=>x.x===cx&&x.y===cy)
+                    &&!dItems.find(x=>x.x===cx&&x.y===cy)
+                    &&!(cx===player.x&&cy===player.y)){
+                    dChests.push({x:cx,y:cy,opened:false});
+                    break;
+                }
+            }
+        }
+        updateDungFOV();
+        $('loc-name').textContent=`${currentDungeon.emoji} ${currentDungeon.name}`;
+        $('floor-txt').textContent=`Этаж ${floorNum}/${currentDungeon.floors}`;
+        $('map-mode-lbl').textContent=`Эт.${floorNum}`;
+        centerCamOn(player.x,player.y);
+        log(`📍 ${currentDungeon.name} — Этаж ${floorNum}`,'info');
+    }
+
+    function updateDungFOV(){
+        const sz=DUNG_SIZE;
+        for(let dy=-5;dy<=5;dy++)for(let dx=-5;dx<=5;dx++)
+            if(dx*dx+dy*dy<=22){const nx=player.x+dx,ny=player.y+dy;if(nx>=0&&ny>=0&&nx<sz&&ny<sz)dVis[ny][nx]=true;}
+    }
+    function dungCanSee(x,y){const d=x-player.x,e=y-player.y;return d*d+e*e<=22;}
+    function isDungFloor(x,y){return x>=0&&y>=0&&x<DUNG_SIZE&&y<DUNG_SIZE&&dMap[y][x]!==DT.WALL;}
+
+    function handleDungeonStep(){
+        const tile=dMap[player.y][player.x];
+        if(tile===DT.STAIRS){
+            log('Спуск на следующий этаж...','info');
+            floorNum++;
+            updateQuestProgress('floors','floor');
+            if(floorNum>currentDungeon.floors){
+                player.gold+=rng(60,120);
+                log(`🏆 Подземелье пройдено: ${currentDungeon.name}! +золото!`,'level');
+                exitDungeon(); return;
+            }
+            generateDungFloor(); return;
+        }
+        // Check chest
+        const chest=dChests.find(c=>c.x===player.x&&c.y===player.y&&!c.opened);
+        if(chest){
+            openChest(chest); return;
+        }
+        const trap=dTraps.find(tr=>tr.x===player.x&&tr.y===player.y&&!tr.triggered);
+        if(trap){
+            trap.triggered=true;
+            if(trap.altar){
+                player.hp=Math.min(player.hp+35,player.maxHp);
+                player.mp=Math.min(player.mp+22,player.maxMp);
+                addFX(player.x,player.y,'✨ АЛТАРЬ','#ffdd44');
+                log('✨ Алтарь: +35 HP, +22 MP!','heal');
+            } else {
+                const eff=rng(0,2);
+                if(eff===0){player.hp-=trap.dmg;addFX(player.x,player.y,`💀-${trap.dmg}`,'#ff4400');log(`💀 Ловушка! -${trap.dmg} HP`,'dmg');}
+                else if(eff===1){player.statuses.poison=4;log('☠ Ловушка-яд! 4 хода.','dmg');}
+                else{player.statuses.burn=3;log('🔥 Огненная ловушка! 3 хода.','dmg');}
+                if(player.hp<=0){player.hp=0;showEndgame(false);return;}
+            }
+        }
+        applyStatuses();
+    }
+
+    function openChest(chest){
+        chest.opened=true;
+        pendingChest=chest;
+        log('📦 Сундук! Брось кубик D20 для оценки ценности сокровища...','info');
+        // Show chest dice modal
+        showChestDice();
+    }
+
+    function showChestDice(){
+        // Reuse a simple prompt or do inline
+        const roll=rollD20();
+        let quality, msg;
+        if(roll>=18){quality='legendary'; msg=`🎲 D20=${roll} — ЛЕГЕНДАРНАЯ находка!`;}
+        else if(roll>=14){quality='epic';    msg=`🎲 D20=${roll} — Эпическая находка!`;}
+        else if(roll>=9){ quality='rare';    msg=`🎲 D20=${roll} — Редкая находка!`;}
+        else if(roll>=4){ quality='common';  msg=`🎲 D20=${roll} — Обычный лут.`;}
+        else {            quality='trap';    msg=`🎲 D20=${roll} — Ловушка! Сундук был с сюрпризом!`;}
+
+        log(msg,'dice');
+        addFX(player.x,player.y,`🎲${roll}`,'#ffdd44');
+
+        if(quality==='trap'){
+            const dmg=rng(10,25);
+            player.hp=Math.max(1,player.hp-dmg);
+            log(`💀 Ловушка в сундуке! -${dmg} HP`,'dmg');
+            addFX(player.x,player.y,`-${dmg}`,'#ff4400');
+            if(player.hp<=0){player.hp=0;showEndgame(false);}
+        } else {
+            // Give loot based on quality
+            const count = quality==='legendary'?3:quality==='epic'?2:1;
+            const rarityForQ = {legendary:RARITY[3],epic:RARITY[2],rare:RARITY[1],common:RARITY[0]};
+            const rar = rarityForQ[quality]||RARITY[0];
+            for(let i=0;i<count;i++){
+                const base=BASE_ITEMS.filter(b=>b.type!=='gold')[rng(0,BASE_ITEMS.filter(b=>b.type!=='gold').length-1)];
+                const item={...applyRarity(base,rar),x:pendingChest.x,y:pendingChest.y};
+                if(player.inventory.length<MAX_INV){
+                    player.inventory.push(item);
+                    log(`📦 ${item.emoji} Из сундука: ${item.name} [${rar.name}] (${item.desc})`,'loot');
+                } else {
+                    dItems.push(item);
+                    log(`📦 ${item.emoji} Из сундука (на полу): ${item.name}`,'loot');
+                }
+            }
+            // Always some gold
+            const gold=Math.floor(rng(10,30)*(roll/10)*diff.goldM);
+            player.gold+=gold;
+            log(`💰 +${gold} золота из сундука`,'loot');
+        }
+        pendingChest=null;
+        render(); updateUI();
+    }
+
+    function applyStatuses(){
+        if(player.statuses.poison>0){
+            const d=rng(3,7); player.hp=Math.max(1,player.hp-d);
+            addFX(player.x,player.y,`☠-${d}`,'#44ff44'); player.statuses.poison--;
+            if(!player.statuses.poison) log('Яд прошёл.','info');
+        }
+        if(player.statuses.burn>0){
+            const d=rng(5,10); player.hp=Math.max(1,player.hp-d);
+            addFX(player.x,player.y,`🔥-${d}`,'#ff6600'); player.statuses.burn--;
+            if(!player.statuses.burn) log('Горение прошло.','info');
+        }
+    }
+
+    function pickupItem(){
+        if(inCombat) return;
+        const items = gameMode==='world'?worldItems:dItems;
+        const it=items.find(i=>i.x===player.x&&i.y===player.y);
+        if(!it){log('Здесь ничего нет.','info');return;}
+        const arr = gameMode==='world'?worldItems:dItems;
+        const idx=arr.indexOf(it); if(idx>=0)arr.splice(idx,1);
+        if(it.type==='gold'){
+            const g=Math.floor((it.effect.gold||0)*diff.goldM);
+            player.gold+=g; log(`💰 +${g} золота`,'loot');
+        } else {
+            if(player.inventory.length>=MAX_INV){log('Инвентарь полон!','info');arr.push(it);return;}
+            player.inventory.push(it);
+            log(`${it.emoji} Подобран: ${it.name}${it.rarity?' ['+it.rarity.name+']':''}${it.desc?' ('+it.desc+')':''}`,'loot');
+        }
+        render(); updateUI();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  COMBAT — DnD DICE SYSTEM
+    // ═══════════════════════════════════════════════════════════
+    function startCombat(enemy, isWorldMonster){
+        inCombat=true; combatEnemy=enemy; playerTurn=true;
+        combatPhase='choose'; pendingAction=null;
+        $('combat-ov').style.display='flex';
+        $('cf-p-ico').textContent=player.classData.emoji;
+        $('cf-p-name').textContent=player.classData.name;
+        $('cf-e-ico').textContent=enemy.emoji;
+        $('cf-e-name').textContent=enemy.name;
+        $('ca-s1-ico').textContent=player.skills[0].icon;
+        $('ca-s1-name').textContent=player.skills[0].name;
+        $('ca-s2-ico').textContent=player.skills[1].icon;
+        $('ca-s2-name').textContent=player.skills[1].name;
+        $('c-log').innerHTML='';
+        $('c-dice-result').textContent='Выбери действие, затем брось кубики';
+        resetCombatDice();
+        clog(`⚔ Встреча с ${enemy.emoji} ${enemy.name}!`,'cl-info');
+        updateCombatUI();
+        setPlayerTurn(true);
+    }
+
+    function resetCombatDice(){
+        const atk=$('cd-atk'), mod=$('cd-mod'), def=$('cd-def');
+        atk.querySelector('.d-val').textContent='—';
+        mod.querySelector('.d-val').textContent='—';
+        def.querySelector('.d-val').textContent='—';
+        [atk,mod,def].forEach(d=>{d.className='cdice';});
+        $('c-roll-btn').disabled=true;
+    }
+
+    function updateCombatUI(){
+        if(!combatEnemy)return;
+        $('cf-p-hp').textContent=`${player.hp}/${player.maxHp}`;
+        $('cf-p-bar').style.width=`${Math.max(0,player.hp/player.maxHp*100)}%`;
+        $('cf-e-hp').textContent=`${combatEnemy.hp}/${combatEnemy.maxHp}`;
+        $('cf-e-bar').style.width=`${Math.max(0,combatEnemy.hp/combatEnemy.maxHp*100)}%`;
+        const s1=player.skills[0], s2=player.skills[1];
+        $('ca-s1-sub').textContent=s1.cd>0?`КД:${s1.cd}`:`${s1.mp}MP Ур.${s1.lvl+1}`;
+        $('ca-s2-sub').textContent=s2.cd>0?`КД:${s2.cd}`:`${s2.mp}MP Ур.${s2.lvl+1}`;
+        $('ca-s1').disabled=player.mp<s1.mp||s1.cd>0||!playerTurn;
+        $('ca-s2').disabled=player.mp<s2.mp||s2.cd>0||!playerTurn;
+        $('ca-attack').disabled=!playerTurn;
+        $('ca-flee').disabled=!playerTurn;
+        $('c-roll-btn').disabled=combatPhase!=='rolling';
+    }
+
+    function setPlayerTurn(yes){
+        playerTurn=yes;
+        const tb=$('turn-badge');
+        tb.className='turn-badge '+(yes?'tb-p':'tb-e');
+        tb.textContent=yes?'ХОД ИГРОКА':'ХОД ВРАГА...';
+        if(!yes){
+            updateCombatUI();
+            setTimeout(enemyTurn,800);
+        } else {
+            combatPhase='choose';
+            resetCombatDice();
+            $('c-dice-result').textContent='Выбери действие, затем брось кубики';
+            updateCombatUI();
+        }
+    }
+
+    function combatAction(action){
+        if(!playerTurn||inCombat===false) return;
+        if(combatPhase==='rolling'){return;} // wait for dice
+
+        const e=combatEnemy;
+        if(action==='s1'||action==='s2'){
+            const sk=action==='s1'?player.skills[0]:player.skills[1];
+            if(player.mp<sk.mp||sk.cd>0) return;
+            // Skills with dice embedded
+            pendingAction=action;
+            combatPhase='rolling';
+            $('c-roll-btn').disabled=false;
+            $('c-dice-result').textContent=`🎲 Бросьте кубики для: ${sk.name}`;
+            updateCombatUI();
+            return;
+        }
+        if(action==='flee'){
+            pendingAction='flee';
+            combatPhase='rolling';
+            $('c-roll-btn').disabled=false;
+            $('c-dice-result').textContent='🎲 Бросьте D6 — нужно ≥ 4 для побега!';
+            updateCombatUI();
+            return;
+        }
+        if(action==='attack'){
+            pendingAction='attack';
+            combatPhase='rolling';
+            $('c-roll-btn').disabled=false;
+            $('c-dice-result').textContent='🎲 Бросьте D20 для атаки! Крит = 20!';
+            updateCombatUI();
+        }
+    }
+
+    function combatRoll(){
+        if(combatPhase!=='rolling'||!pendingAction) return;
+        $('c-roll-btn').disabled=true;
+        combatPhase='animating';
+
+        const atkDie=$('cd-atk'), modDie=$('cd-mod'), defDie=$('cd-def');
+        atkDie.classList.add('rolling');
+        modDie.classList.add('rolling');
+        defDie.classList.add('rolling');
+
+        let ticks=0;
+        const interval=setInterval(()=>{
+            atkDie.querySelector('.d-val').textContent=rng(1,20);
+            modDie.querySelector('.d-val').textContent=rng(1,6);
+            defDie.querySelector('.d-val').textContent=rng(1,20);
+            if(++ticks>=8){
+                clearInterval(interval);
+                atkDie.classList.remove('rolling');
+                modDie.classList.remove('rolling');
+                defDie.classList.remove('rolling');
+                resolveCombatAction();
+            }
+        },60);
+    }
+
+    function resolveCombatAction(){
+        const e=combatEnemy;
+        const action=pendingAction;
+        combatPhase='result';
+
+        if(action==='flee'){
+            const roll=rollD6();
+            $('cd-atk').querySelector('.d-val').textContent=roll;
+            $('cd-atk').querySelector('.d-lbl').textContent='D6 бег';
+            $('cd-mod').querySelector('.d-val').textContent='4';
+            $('cd-mod').querySelector('.d-lbl').textContent='нужно ≥';
+            $('cd-def').querySelector('.d-val').textContent=roll>=4?'✓':'✗';
+            if(player.guaranteedFlee||roll>=4){
+                player.guaranteedFlee=false;
+                $('c-dice-result').textContent=`D6=${roll} ≥ 4 — Побег удался! 🏃`;
+                clog(`🏃 D6=${roll} — Побег удался!`,'cl-info');
+                log('Ты отступил из боя.','info');
+                setTimeout(()=>endCombat(),600);
+            } else {
+                $('c-dice-result').textContent=`D6=${roll} < 4 — Побег провалился!`;
+                clog(`🚫 D6=${roll} — Побег провалился!`,'cl-info');
+                setTimeout(()=>setPlayerTurn(false),600);
+            }
+            return;
+        }
+
+        if(action==='s1'||action==='s2'){
+            const sk=action==='s1'?player.skills[0]:player.skills[1];
+            player.mp-=sk.mp;
+            const skillRoll=rollD6(); const skBon=Math.floor(player.level/2)+1;
+            $('cd-atk').querySelector('.d-val').textContent=sk.icon;
+            $('cd-atk').querySelector('.d-lbl').textContent='умение';
+            $('cd-mod').querySelector('.d-val').textContent=`+${skillRoll}`;
+            $('cd-mod').querySelector('.d-lbl').textContent='D6 бонус';
+            $('cd-def').querySelector('.d-val').textContent=`+${skBon}`;
+            $('cd-def').querySelector('.d-lbl').textContent='ур.бонус';
+
+            const res=sk.fn(player,e,sk);
+            if(res.dmg>0){
+                const total=res.dmg+skillRoll;
+                e.hp-=total;
+                $('cd-atk').classList.add('hi');
+                addFX(e.x,e.y,`-${total}✨`,'#cc88ff');
+                spawnParticles(e.x,e.y,'#9944ff',7);
+                $('c-dice-result').textContent=`${sk.name}: ${res.dmg} + D6(${skillRoll}) = ${total} урона!`;
+            } else {
+                $('c-dice-result').textContent=res.msg;
+            }
+            if(res.heal){
+                addFX(player.x,player.y,`+${res.heal}❤`,'#44ff44');
+                $('cd-def').classList.add('hi');
+            }
+            clog(res.msg+(res.dmg?` [Итого: ${res.dmg+skillRoll} урона]`:''),'cl-p');
+            sk.cd=3;
+            setTimeout(()=>checkCombatEnd()||setPlayerTurn(false),700);
+            return;
+        }
+
+        // Normal attack — D20 system
+        const atkRoll=rollD20();
+        const atkMod=player.classData.atkMod(player);
+        const defRoll=rollD20();
+        const defMod=Math.floor(e.def*1.5+d(4));
+        const totalAtk=atkRoll+atkMod;
+        const totalDef=defRoll+defMod;
+
+        $('cd-atk').querySelector('.d-val').textContent=atkRoll;
+        $('cd-atk').querySelector('.d-lbl').textContent=`D20+${atkMod}`;
+        $('cd-mod').querySelector('.d-val').textContent=totalAtk;
+        $('cd-mod').querySelector('.d-lbl').textContent='итого атк';
+        $('cd-def').querySelector('.d-val').textContent=totalDef;
+        $('cd-def').querySelector('.d-lbl').textContent=`защита`;
+
+        let dmg=0, resultMsg='';
+        if(atkRoll===20){
+            // Natural 20 = Critical!
+            dmg=Math.floor(player.atk*2.5+d(8));
+            $('cd-atk').classList.add('hi');
+            resultMsg=`💥 НАТУРАЛЬНЫЙ 20! КРИТ! ${dmg} урона!`;
+            clog(`💥 НАТУРАЛЬНЫЙ 20 — КРИТ! ${dmg} урона!`,'cl-crit');
+            addFX(e.x,e.y,`💥${dmg}!!`,'#ffdd44');
+            spawnParticles(e.x,e.y,'#ffdd44',14);
+        } else if(atkRoll===1){
+            // Natural 1 = Miss!
+            $('cd-atk').classList.add('lo');
+            resultMsg='💨 НАТУРАЛЬНЫЙ 1 — Промах! Удар в пустоту!';
+            clog('💨 НАТУРАЛЬНЫЙ 1 — Промах!','cl-e');
+            addFX(player.x,player.y,'МИМО!','#ff4444');
+        } else if(totalAtk>totalDef){
+            // Hit
+            dmg=Math.max(1, Math.floor((totalAtk-totalDef)/2 + player.atk));
+            let extra='';
+            if(rngf()<player.crit){dmg=Math.floor(dmg*1.8);extra=' (КРИТ)';$('cd-atk').classList.add('hi');}
+            $('cd-atk').classList.add('hi');
+            resultMsg=`⚔️ Попадание! (${totalAtk}>${totalDef}) ${dmg}${extra} урона`;
+            clog(`⚔️ D20(${atkRoll})+${atkMod}=${totalAtk} > ${totalDef} — ${dmg}${extra} урона!`,'cl-p');
+            addFX(e.x,e.y,`-${dmg}`,'#ff4422');
+            spawnParticles(e.x,e.y,'#cc2200',6);
+        } else {
+            // Miss
+            $('cd-def').classList.add('hi');
+            resultMsg=`🛡 Промах! Атака (${totalAtk}) ≤ Защита (${totalDef})`;
+            clog(`🛡 D20(${atkRoll})+${atkMod}=${totalAtk} ≤ ${totalDef} — Промах!`,'cl-e');
+            addFX(e.x,e.y,'БЛОК','#5544aa');
+        }
+        if(dmg>0) e.hp-=dmg;
+        $('c-dice-result').textContent=resultMsg;
+        setTimeout(()=>checkCombatEnd()||setPlayerTurn(false),700);
+    }
+
+    function checkCombatEnd(){
+        if(combatEnemy&&combatEnemy.hp<=0){
+            clog(`${combatEnemy.emoji} ${combatEnemy.name} повержен!`,'cl-p');
+            setTimeout(()=>{killEnemy(combatEnemy);endCombat();},600);
+            return true;
+        }
+        if(player.hp<=0){
+            clog('💀 Ты пал...','cl-e');
+            setTimeout(()=>showEndgame(false),900);
+            return true;
+        }
+        return false;
+    }
+
+    function enemyTurn(){
+        if(!inCombat) return;
+        const e=combatEnemy;
+        // Enemy also rolls D20 vs player defense
+        if(player.blocking==='full'){
+            clog(`🛡️ Полная блокировка! Удар ${e.name} отражён!`,'cl-info');
+            player.blocking=false;
+            player.skills.forEach(s=>{if(s.cd>0)s.cd--;});
+            setTimeout(()=>setPlayerTurn(true),400); return;
+        }
+        if(player.statuses.stun>0){
+            player.statuses.stun--;
+            clog('💫 Оглушён! Пропускаешь ход.','cl-e');
+            setTimeout(()=>setPlayerTurn(true),400); return;
+        }
+        const atkRoll=rollD20();
+        const eMod=Math.floor(e.atk/3+floorNum*.5);
+        const defMod=player.classData.defMod(player);
+        const totalAtk=atkRoll+eMod;
+        const totalDef=defMod+rollD6();
+
+        // Show in dice display
+        $('cd-atk').querySelector('.d-val').textContent=atkRoll;
+        $('cd-atk').querySelector('.d-lbl').textContent=`${e.emoji}D20`;
+        $('cd-mod').querySelector('.d-val').textContent=totalAtk;
+        $('cd-mod').querySelector('.d-lbl').textContent='атк врага';
+        $('cd-def').querySelector('.d-val').textContent=totalDef;
+        $('cd-def').querySelector('.d-lbl').textContent='твоя защита';
+        ['cd-atk','cd-mod','cd-def'].forEach(id=>$(id).classList.remove('hi','lo'));
+
+        let dmg=0;
+        if(atkRoll===20){
+            dmg=Math.floor(e.atk*2+d(6));
+            $('cd-atk').classList.add('lo');
+            clog(`💢 ${e.name} КРИТ! D20=20! ${dmg} урона!`,'cl-e');
+            addFX(player.x,player.y,`💢${dmg}!!`,'#ff2200');
+            spawnParticles(player.x,player.y,'#dd2200',12);
+            $('c-dice-result').textContent=`ВРАЖЕСКИЙ КРИТ! ${dmg} урона!`;
+        } else if(atkRoll===1){
+            clog(`💨 ${e.name} промахнулся! D20=1`,'cl-p');
+            $('c-dice-result').textContent=`${e.name} промахнулся! (D20=1)`;
+        } else if(player.blocking){
+            player.blocking=false;
+            clog(`🛡️ Блок! Удар ${e.name} заблокирован!`,'cl-p');
+            $('c-dice-result').textContent='Блок! Удар заблокирован!';
+        } else if(rngf()<player.dodge){
+            clog(`💨 Уклонение! Ты избежал удара!`,'cl-p');
+            $('c-dice-result').textContent='Уклонение!';
+        } else if(totalAtk>totalDef){
+            dmg=Math.max(1,Math.floor((totalAtk-totalDef)/2 + e.atk*.5));
+            $('cd-atk').classList.add('lo');
+            clog(`${e.emoji} D20(${atkRoll})+${eMod}=${totalAtk} > ${totalDef} — ${dmg} урона.`,'cl-e');
+            $('c-dice-result').textContent=`${e.name}: ${totalAtk}>${totalDef} — ${dmg} урона!`;
+            addFX(player.x,player.y,`-${dmg}`,'#ff2200');
+            spawnParticles(player.x,player.y,'#cc0000',5);
+        } else {
+            $('cd-def').classList.add('hi');
+            clog(`🛡 ${e.emoji} Промах! ${totalAtk} ≤ ${totalDef}`,'cl-info');
+            $('c-dice-result').textContent=`Промах врага! ${totalAtk}≤${totalDef}`;
+        }
+
+        if(dmg>0){
+            if(player.reflectShield){
+                const ref=Math.floor(dmg*.3);
+                e.hp-=ref; dmg=Math.ceil(dmg*.7);
+                clog(`🔮 Щит отразил ${ref} урона!`,'cl-heal');
+                player.reflectShield=false;
+            }
+            player.hp-=dmg;
+        }
+        // Enemy DoT
+        if(e.burnStack>0){const bd=d(4);e.hp-=bd;e.burnStack--;clog(`🔥 ${e.name} горит: -${bd}`,'cl-p');}
+        if(e.poisonStack>0){const pd=d(4);e.hp-=pd;e.poisonStack--;clog(`☠ ${e.name} отравлен: -${pd}`,'cl-p');}
+        if(e.stunStack>0){e.stunStack--;clog(`💫 ${e.name} оглушён.`,'cl-info');}
+
+        updateCombatUI();
+        if(e.hp<=0){clog(`${e.emoji} ${e.name} от DoT!`,'cl-p');setTimeout(()=>{killEnemy(e);endCombat();},600);return;}
+        if(player.hp<=0){player.hp=0;clog('💀 Ты пал...','cl-e');setTimeout(()=>showEndgame(false),900);return;}
+        player.skills.forEach(s=>{if(s.cd>0)s.cd--;});
+        setTimeout(()=>setPlayerTurn(true),500);
+    }
+
+    function killEnemy(m){
+        if(gameMode==='world') worldMonsters=worldMonsters.filter(x=>x!==m);
+        else dMonsters=dMonsters.filter(x=>x!==m);
+        const g=Math.floor(rng(...m.gold)*diff.goldM);
+        player.gold+=g; player.xp+=m.xp;
+        log(`💀 ${m.name} повержен! +${m.xp}XP +${g}💰`,'loot');
+        updateQuestProgress('kill', m.name);
+        // Loot drop
+        if(rngf()<.42){
+            const base=BASE_ITEMS[rng(0,BASE_ITEMS.length-1)];
+            const drop={...applyRarity(base,rollRarity()),x:m.x,y:m.y};
+            if(gameMode==='world') worldItems.push(drop);
+            else dItems.push(drop);
+            log(`${drop.emoji} Выпал [${drop.rarity?.name}]: ${drop.name} (${drop.desc})`,'loot');
+        }
+        checkLevelUp();
+    }
+    function endCombat(){
+        inCombat=false; combatEnemy=null;
+        $('combat-ov').style.display='none';
+        if(gameMode==='world')endTurn();
+        render(); updateUI();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  LEVELING
+    // ═══════════════════════════════════════════════════════════
+    function checkLevelUp(){
+        while(player.xp>=player.xpNext){
+            player.xp-=player.xpNext; player.level++;
+            player.xpNext=Math.floor(player.xpNext*1.42);
+            player.maxHp+=14; player.hp=Math.min(player.hp+14, player.maxHp);
+            player.maxMp+=9;  player.mp=Math.min(player.mp+9, player.maxMp);
+            player.baseAtk+=2; player.baseDef+=1;
+            player.skillPoints+=2;
+            recalcStats();
+            log(`🌟 УРОВЕНЬ ${player.level}! +2 очка умений!`,'level');
+            addFX(player.x,player.y,'LEVEL UP!','#ffdd00');
+            buildSkillsUI(); updateUI();
+        }
+    }
+    function recalcStats(){player.atk=player.baseAtk;player.def=player.baseDef;}
+
+    // ═══════════════════════════════════════════════════════════
+    //  ITEMS
+    // ═══════════════════════════════════════════════════════════
+    function useItem(it, fromInv){
+        if(it.type==='consumable'){
+            if(it.effect.hp){const h=Math.min(it.effect.hp,player.maxHp-player.hp);player.hp+=h;log(`🧪 ${it.name}: +${h} HP`,'heal');addFX(player.x,player.y,`+${h}❤`,'#44ff44');}
+            if(it.effect.mp){const h=Math.min(it.effect.mp,player.maxMp-player.mp);player.mp+=h;log(`💙 +${h} MP`,'heal');}
+            if(fromInv) player.inventory=player.inventory.filter(x=>x!==it);
+        } else if(it.slot){
+            const slot=it.slot;
+            if(player.equipped[slot]){
+                const old=player.equipped[slot];
+                if(old.effect.atk) player.baseAtk-=old.effect.atk;
+                if(old.effect.def) player.baseDef-=old.effect.def;
+                if(old.effect.maxHp){player.maxHp-=old.effect.maxHp;player.hp=Math.min(player.hp,player.maxHp);}
+                player.equipped[slot]=null;
+            }
+            player.equipped[slot]=it;
+            if(it.effect.atk) player.baseAtk+=it.effect.atk;
+            if(it.effect.def) player.baseDef+=it.effect.def;
+            if(it.effect.maxHp) player.maxHp+=it.effect.maxHp;
+            if(!player.inventory.includes(it)) player.inventory.push(it);
+            recalcStats();
+            log(`${it.emoji} Экипировано: ${it.name} (${it.desc})`,'loot');
+        }
+    }
+    function unequipItem(it){
+        const slot=it.slot; player.equipped[slot]=null;
+        if(it.effect.atk) player.baseAtk-=it.effect.atk;
+        if(it.effect.def) player.baseDef-=it.effect.def;
+        if(it.effect.maxHp){player.maxHp-=it.effect.maxHp;player.hp=Math.min(player.hp,player.maxHp);}
+        recalcStats(); log(`${it.emoji} Снято: ${it.name}`,'info');
+    }
+
+    // Item Modal
+    let _modalItem=null;
+    function openItemModal(it){
+        _modalItem=it;
+        $('im-ico').textContent=it.emoji;
+        $('im-name').textContent=it.name+(it.rarity?' ['+it.rarity.name+']':'');
+        $('im-name').style.color=it.rarity?it.rarity.color:'#c9913a';
+        const TM={consumable:'Расходник',weapon:'Оружие',armor:'Броня',accessory:'Аксессуар',gold:'Золото'};
+        $('im-type').textContent=TM[it.type]||it.type;
+        $('im-desc').textContent=it.desc;
+        const btns=$('im-btns'); btns.innerHTML='';
+        const eq=Object.values(player.equipped).includes(it);
+        if(it.type==='consumable') mkBtn('Использовать','use',()=>{useItem(it,true);closeItemModal();updateUI();render();});
+        else if(it.slot){
+            mkBtn(eq?'Снять':'Надеть','use',()=>{if(eq)unequipItem(it);else useItem(it,true);closeItemModal();updateUI();});
+            if(!eq){
+                mkBtn('Выбросить','drop',()=>{player.inventory=player.inventory.filter(x=>x!==it);log(`Выброшено: ${it.name}`,'info');closeItemModal();updateUI();});
+            }
+        }
+        mkBtn('Закрыть','',closeItemModal);
+        $('item-modal').classList.add('open');
+    }
+    function mkBtn(lbl,cls,fn){
+        const b=document.createElement('button');
+        b.className='im-btn '+(cls||''); b.textContent=lbl; b.onclick=fn;
+        $('im-btns').appendChild(b);
+    }
+    function closeItemModal(){$('item-modal').classList.remove('open');}
+
+    // Tooltip
+    function showTT(e,it){
+        const TM={consumable:'Расходник',weapon:'Оружие',armor:'Броня',accessory:'Аксессуар',gold:'Золото'};
+        const eq=Object.values(player.equipped).includes(it);
+        $('tt-n').style.color=it.rarity?it.rarity.color:'#c9913a';
+        $('tt-n').textContent=`${it.emoji} ${it.name}${it.rarity?' ['+it.rarity.name+']':''}`;
+        $('tt-t').textContent=TM[it.type]; $('tt-d').textContent=it.desc;
+        $('tt-e').textContent=eq?'✓ Экипировано':'';
+        $('tooltip').style.display='block'; moveTT(e);
+    }
+    function moveTT(e){
+        let x=e.clientX+12,y=e.clientY-8;
+        if(x+165>window.innerWidth)x=e.clientX-178;
+        $('tooltip').style.left=x+'px'; $('tooltip').style.top=y+'px';
+    }
+    function hideTT(){$('tooltip').style.display='none';}
+
+    // ═══════════════════════════════════════════════════════════
+    //  NPC DIALOG
+    // ═══════════════════════════════════════════════════════════
+    let _activeNpc = null;
+    let _npcPhraseIdx = 0;
+
+    function openNpcDialog(npc){
+        _activeNpc = npc;
+        _npcPhraseIdx = 0;
+        npcDialogOpen = true;
+        $('npc-ico').textContent = npc.emoji;
+        $('npc-name').textContent = npc.name;
+        const text = npc.talked ? npc.phrases[0] : npc.greeting;
+        $('npc-dialog-text').textContent = `"${text}"`;
+        npc.talked = true;
+        buildNpcPhrases(npc);
+        buildNpcQuestArea(npc);
+        // Buttons
+        const btns = $('npc-btns'); btns.innerHTML='';
+
+        // Rogue-only steal button
+        if(player.cls === 'rogue' && !npc.robbed){
+            const stealBtn = document.createElement('button');
+            stealBtn.className='dp-btn';
+            stealBtn.style.cssText='border-color:#33cc55;color:#33cc55;';
+            stealBtn.textContent='🗡️ Обокрасть';
+            stealBtn.onclick = attemptSteal;
+            btns.appendChild(stealBtn);
+        } else if(npc.robbed){
+            const robbedLbl = document.createElement('span');
+            robbedLbl.style.cssText='font-size:.6rem;color:#3a5a3a;font-family:Cinzel,serif;padding:6px 10px;';
+            robbedLbl.textContent='✓ Обокраден';
+            btns.appendChild(robbedLbl);
+        }
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className='dp-btn'; closeBtn.textContent='↩ Уйти';
+        closeBtn.onclick = closeNpcDialog;
+        btns.appendChild(closeBtn);
+        $('npc-modal').classList.add('open');
+        log(`💬 Разговор с ${npc.name}`,'info');
+    }
+
+    function attemptSteal(){
+        if(!_activeNpc || player.cls !== 'rogue') return;
+        const npc = _activeNpc;
+        closeNpcDialog();
+
+        // Roll D20 — рogue level и dodge влияют на шанс
+        const roll = rollD20();
+        const bonus = Math.floor(player.level * 1.5 + player.dodge * 15);
+        const total = roll + bonus;
+        const threshold = 14; // нужно набрать 14+
+
+        log(`🎲 Попытка кражи: D20=${roll} + бонус ${bonus} = ${total} (нужно ≥${threshold})`,'dice');
+        addFX(player.x, player.y, `🎲${roll}`, '#33cc55');
+
+        if(roll === 1){
+            // Критический провал — сразу в бой
+            log(`💀 Критический провал! ${npc.name} поймал тебя с поличным!`,'dmg');
+            startNpcCombat(npc);
+        } else if(total >= threshold){
+            // Успех
+            npc.robbed = true;
+            const lootRoll = rollD20();
+            let loot, lootMsg;
+            if(lootRoll >= 16){
+                // Редкий предмет
+                const bases = BASE_ITEMS.filter(b=>b.type!=='gold'&&(!b.classes||b.classes.includes('rogue')));
+                const base = bases[rng(0,bases.length-1)];
+                loot = {...applyRarity(base, RARITY[1])};
+                lootMsg = `${loot.emoji} ${loot.name} [${loot.rarity.name}]`;
+            } else if(lootRoll >= 8){
+                // Золото
+                const gold = rng(15,50) + player.level*3;
+                player.gold += gold;
+                log(`🗡️ Успех! Украдено ${gold}💰 у ${npc.name}!`,'loot');
+                addFX(player.x, player.y, `+${gold}💰`, '#33cc55');
+                updateUI(); return;
+            } else {
+                // Немного золота
+                const gold = rng(5,20);
+                player.gold += gold;
+                log(`🗡️ Успех! Украдено ${gold}💰 у ${npc.name}.`,'loot');
+                addFX(player.x, player.y, `+${gold}💰`, '#33cc55');
+                updateUI(); return;
+            }
+            if(loot){
+                if(player.inventory.length < MAX_INV){
+                    player.inventory.push(loot);
+                    log(`🗡️ Успех! Украден предмет у ${npc.name}: ${lootMsg}!`,'loot');
+                    addFX(player.x, player.y, '✓ КРАЖА', '#33cc55');
+                } else {
+                    log('🗡️ Успех, но инвентарь полон — предмет выброшен!','info');
+                }
+            }
+            updateUI();
+        } else {
+            // Провал — обнаружен, начинается бой
+            log(`⚠️ Провал (${total}<${threshold})! ${npc.name} заметил тебя!`,'dmg');
+            addFX(player.x, player.y, 'ПОЙМАЛИ!', '#ff4400');
+            setTimeout(()=>startNpcCombat(npc), 400);
+        }
+    }
+
+    function startNpcCombat(npc){
+        // Создаём врага из НПС
+        const lvl = Math.max(1, player.level);
+        const enemy = {
+            name: npc.name,
+            emoji: npc.emoji,
+            color: npc.color || '#aa8855',
+            hp: 15 + lvl * 8,
+            maxHp: 15 + lvl * 8,
+            atk: 4 + lvl * 2,
+            def: 1 + lvl,
+            xp: 10 + lvl * 5,
+            gold: [5 + lvl*2, 15 + lvl*4],
+            x: player.x, y: player.y,
+            id: Math.random(),
+            poisonStack:0, burnStack:0, stunStack:0,
+            isNpc: true,
+        };
+        // Убираем НПС с карты после боя (обработается в killEnemy)
+        npc.hostile = true;
+        worldNPCs = worldNPCs.filter(n => n !== npc);
+        startCombat(enemy, true);
+    }
+
+    function buildNpcPhrases(npc){
+        const area = $('npc-phrases'); area.innerHTML='';
+        npc.phrases.forEach((ph, i)=>{
+            const btn = document.createElement('button');
+            btn.className='dp-btn';
+            btn.style.cssText='font-size:.6rem;padding:4px 12px;margin:2px;';
+            btn.textContent = ph.length>38 ? ph.slice(0,35)+'…' : ph;
+            btn.title = ph;
+            btn.onclick = ()=>{
+                $('npc-dialog-text').textContent = `"${ph}"`;
+            };
+            area.appendChild(btn);
+        });
+    }
+
+    function buildNpcQuestArea(npc){
+        const area = $('npc-quest-area');
+        if(!npc.questId){ area.style.display='none'; return; }
+        const allQs = [...NPC_QUESTS, ...QUEST_POOL];
+        const q = allQs.find(x=>x.id===npc.questId);
+        if(!q){ area.style.display='none'; return; }
+        const taken = activeQuests.find(x=>x.id===q.id);
+        const done  = completedQuests.find(x=>x.id===q.id);
+        if(done){
+            area.style.display='block';
+            $('npc-quest-title').textContent=`✅ ${q.name}`;
+            $('npc-quest-desc').textContent='Задание выполнено. Спасибо, герой!';
+            $('npc-quest-reward').textContent='';
+            $('npc-take-quest-btn').style.display='none';
+        } else if(taken){
+            area.style.display='block';
+            $('npc-quest-title').textContent=`📋 ${q.name}`;
+            $('npc-quest-desc').textContent=`Прогресс: ${taken.progress}/${taken.count}`;
+            $('npc-quest-reward').textContent=q.rewardDesc||`+${q.reward.gold}💰 +${q.reward.xp}XP`;
+            $('npc-take-quest-btn').style.display='none';
+        } else {
+            area.style.display='block';
+            $('npc-quest-title').textContent=`📋 ${q.name}`;
+            $('npc-quest-desc').textContent=q.desc;
+            $('npc-quest-reward').textContent=`Награда: ${q.rewardDesc||'+'+q.reward.gold+'💰 +'+q.reward.xp+'XP'}`;
+            $('npc-take-quest-btn').style.display='';
+            $('npc-take-quest-btn').disabled=false;
+        }
+    }
+
+    function takeNpcQuest(){
+        if(!_activeNpc||!_activeNpc.questId) return;
+        const allQs = [...NPC_QUESTS, ...QUEST_POOL];
+        const q = allQs.find(x=>x.id===_activeNpc.questId);
+        if(!q) return;
+        takeQuest(q);
+        _activeNpc.questGiven=true;
+        buildNpcQuestArea(_activeNpc);
+        $('npc-dialog-text').textContent=`"Удачи тебе, герой! Я буду ждать твоего возвращения."`;
+    }
+
+    function closeNpcDialog(){
+        npcDialogOpen=false;
+        _activeNpc=null;
+        $('npc-modal').classList.remove('open');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  SHOP
+    function openShop(title, hasQuestBoard){
+        shopOpen=true;
+        shopMode='buy';
+        shopItems=SHOP_ITEMS.filter(s=>{
+            if(!s.classes) return true;
+            return s.classes.includes(player.cls);
+        }).map(s=>({...s,sold:false}));
+        $('shop-title').textContent='🏪 '+(title||'ТОРГОВЕЦ');
+        // Build tabs
+        const tabs=$('shop-tabs');
+        tabs.innerHTML=`
+      <button class="sh-tab active" id="tab-buy" onclick="setShopMode('buy')">Купить</button>
+      <button class="sh-tab" id="tab-sell" onclick="setShopMode('sell')">Продать</button>
+      ${hasQuestBoard?'<button class="sh-tab" id="tab-quest" onclick="setShopMode(\'quests\')">📋 Квесты</button>':''}
+    `;
+        buildShopUI();
+        $('shop-modal').classList.add('open');
+    }
+    function setShopMode(mode){
+        shopMode=mode;
+        document.querySelectorAll('.sh-tab').forEach(t=>t.classList.remove('active'));
+        const t=$(mode==='buy'?'tab-buy':mode==='sell'?'tab-sell':'tab-quest');
+        if(t) t.classList.add('active');
+        buildShopUI();
+    }
+    function closeShop(){shopOpen=false;$('shop-modal').classList.remove('open');}
+    function buildShopUI(){
+        $('shop-gold').textContent=`Твоё золото: ${player.gold}💰`;
+        const grid=$('shop-grid'); grid.innerHTML='';
+        if(shopMode==='buy'){
+            shopItems.forEach((it,i)=>{
+                const d=document.createElement('div');
+                d.className='sh-item'+(it.sold?' sold':'');
+                d.innerHTML=`<span class="sh-ico">${it.emoji}</span><span class="sh-name">${it.name}</span>
+        <span class="sh-desc">${it.desc}</span><span class="sh-price">${it.price}💰</span>
+        <button class="sh-btn" ${it.sold||player.gold<it.price?'disabled':''} onclick="buyItem(${i})">
+          ${it.sold?'Продано':player.gold>=it.price?'Купить':'Нет денег'}
+        </button>`;
+                grid.appendChild(d);
+            });
+        } else if(shopMode==='sell'){
+            const sellable=player.inventory.filter(it=>it.type!=='gold');
+            if(sellable.length===0){
+                grid.innerHTML='<div style="grid-column:1/-1;color:#5a4860;font-size:.7rem;text-align:center;padding:20px;">Нечего продавать</div>';
+            } else {
+                sellable.forEach(it=>{
+                    const sellPrice=getSellPrice(it);
+                    const d=document.createElement('div');
+                    d.className='sh-item';
+                    d.innerHTML=`<span class="sh-ico">${it.emoji}</span><span class="sh-name">${it.name}${it.rarity?'<br><small style="color:'+it.rarity.color+'">['+it.rarity.name+']</small>':''}</span>
+          <span class="sh-desc">${it.desc}</span><span class="sh-price">${sellPrice}💰</span>
+          <button class="sh-btn" onclick="sellItem('${it.name}')">Продать</button>`;
+                    grid.appendChild(d);
+                });
+            }
+        } else if(shopMode==='quests'){
+            const avail=getAvailableQuests();
+            if(activeQuests.length>0){
+                const hdr=document.createElement('div');
+                hdr.className='sh-section-hdr'; hdr.textContent='▸ АКТИВНЫЕ КВЕСТЫ';
+                grid.appendChild(hdr);
+                activeQuests.forEach(q=>{
+                    const d=document.createElement('div');
+                    d.className='sh-item';
+                    d.innerHTML=`<span class="sh-ico">${q.emoji}</span><span class="sh-name">${q.name}</span>
+          <span class="sh-desc">${q.desc}</span>
+          <span class="sh-price" style="color:#44cc88;font-size:.6rem">${q.progress}/${q.count}</span>
+          <button class="sh-btn" disabled style="border-color:#2a3a2a;color:#336633">В процессе</button>`;
+                    grid.appendChild(d);
+                });
+            }
+            if(avail.length>0){
+                const hdr=document.createElement('div');
+                hdr.className='sh-section-hdr'; hdr.textContent='▸ ДОСТУПНЫЕ ЗАДАНИЯ';
+                grid.appendChild(hdr);
+                avail.slice(0,6).forEach(q=>{
+                    const d=document.createElement('div');
+                    d.className='sh-item';
+                    d.innerHTML=`<span class="sh-ico">${q.emoji}</span><span class="sh-name">${q.name}</span>
+          <span class="sh-desc">${q.desc}</span>
+          <span class="sh-price" style="font-size:.55rem;color:#9977ff">+${q.reward.gold}💰 +${q.reward.xp}XP</span>
+          <button class="sh-btn" onclick="takeQuestUI('${q.id}')" style="border-color:#5544aa;color:#9977ff">Взять</button>`;
+                    grid.appendChild(d);
+                });
+            }
+            if(activeQuests.length===0&&avail.length===0){
+                grid.innerHTML='<div style="grid-column:1/-1;color:#5a4860;font-size:.7rem;text-align:center;padding:20px;">Все квесты выполнены!</div>';
+            }
+        }
+    }
+    function getSellPrice(it){
+        const base=it.price||0;
+        const rarM={Обычный:.4,Редкий:.55,Эпический:.65,'Легенд.':.75}[it.rarity?.name]||.4;
+        if(it.type==='consumable') return Math.max(3,Math.floor((base||12)*0.4));
+        const effVal=Object.values(it.effect||{}).reduce((a,v)=>a+v,0)*3;
+        return Math.max(5,Math.floor(((base||effVal))*rarM));
+    }
+    function buyItem(i){
+        const it=shopItems[i];
+        if(it.sold||player.gold<it.price) return;
+        if(player.inventory.length>=MAX_INV){log('Инвентарь полон!','info');return;}
+        player.gold-=it.price; it.sold=true;
+        player.inventory.push({...it,rarity:RARITY[0]});
+        log(`🛒 Куплено: ${it.name} за ${it.price}💰`,'loot');
+        buildShopUI(); updateUI();
+    }
+    function sellItem(name){
+        const idx=player.inventory.findIndex(it=>it.name===name);
+        if(idx<0) return;
+        const it=player.inventory[idx];
+        const eq=Object.values(player.equipped).includes(it);
+        if(eq){log('Сними предмет перед продажей!','info');return;}
+        const price=getSellPrice(it);
+        player.inventory.splice(idx,1);
+        player.gold+=price;
+        log(`💰 Продано: ${it.name} за ${price}💰`,'loot');
+        buildShopUI(); updateUI();
+    }
+    function takeQuestUI(qid){
+        const q=QUEST_POOL.find(x=>x.id===qid);
+        if(!q) return;
+        takeQuest(q);
+        buildShopUI();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  UI
+    // ═══════════════════════════════════════════════════════════
+    function buildSkillsUI(){
+        const c=$('skills-list'); if(!c) return;
+        c.innerHTML='';
+        const spb=$('sp-badge');
+        if(spb) spb.textContent=`✨ Очки: ${player?.skillPoints||0}`;
+        if(!player) return;
+        player.skills.forEach((s,i)=>{
+            const canUp=player.skillPoints>0&&s.lvl<s.maxLvl;
+            const next=s.lvl<s.maxLvl?s.upgrades[s.lvl]:'Максимум';
+            const r=document.createElement('div'); r.className='sk-row';
+            r.innerHTML=`
+      <div class="sk-key">${i+1}</div>
+      <div class="sk-info">
+        <div class="sk-name">${s.icon} ${s.name}</div>
+        <div class="sk-sub">${s.mp}MP · ${s.desc}</div>
+        <div class="sk-sub" style="color:#3a2860">▶ ${next}</div>
+      </div>
+      <span class="sk-lvl">${s.lvl}/${s.maxLvl}</span>
+      <button class="sk-up" ${canUp?'':'disabled'} onclick="upgradeSkill(${i})">⬆</button>
+    `;
+            c.appendChild(r);
+        });
+    }
+    function upgradeSkill(i){
+        const sk=player.skills[i];
+        if(player.skillPoints<=0||sk.lvl>=sk.maxLvl) return;
+        player.skillPoints--; sk.lvl++;
+        log(`⚡ ${sk.name} ур.${sk.lvl}: ${sk.upgrades[sk.lvl-1]}`,'level');
+        buildSkillsUI(); updateUI();
+    }
+    function updateUI(){
+        if(!player) return;
+        $('hp-txt').textContent=`${player.hp}/${player.maxHp}`;
+        $('mp-txt').textContent=`${player.mp}/${player.maxMp}`;
+        $('xp-txt').textContent=`${player.xp}/${player.xpNext}`;
+        $('hp-bar').style.width=`${player.hp/player.maxHp*100}%`;
+        $('mp-bar').style.width=`${player.mp/player.maxMp*100}%`;
+        $('xp-bar').style.width=`${player.xp/player.xpNext*100}%`;
+        $('s-lvl').textContent=player.level;
+        $('s-atk').textContent=player.atk;
+        $('s-def').textContent=player.def;
+        $('s-gold').textContent=player.gold;
+        buildInvUI();
+        // Statuses
+        const sr=$('status-row'); sr.innerHTML='';
+        const st=player.statuses;
+        if(st.poison>0) sr.innerHTML+=`<span class="badge poison">☠Яд${st.poison}</span>`;
+        if(st.burn>0)   sr.innerHTML+=`<span class="badge burn">🔥${st.burn}</span>`;
+        if(st.stun>0)   sr.innerHTML+=`<span class="badge stun">💫${st.stun}</span>`;
+        if(player.lives>1) sr.innerHTML+=`<span class="badge lives">❤${player.lives}жизни</span>`;
+        // Location
+        if(gameMode==='world'){
+            const loc=WORLD_LOCATIONS.find(l=>l.x===player.x&&l.y===player.y);
+            const ln=$('loc-name');
+            if(ln) ln.textContent=loc?`${loc.emoji} ${loc.name}`:'🌍 Средиземье';
+            const ft=$('floor-txt'); if(ft) ft.textContent='';
+            const mml=$('map-mode-lbl'); if(mml) mml.textContent='мир';
+        }
+        const spb=$('sp-badge'); if(spb) spb.textContent=`✨ Очки: ${player.skillPoints}`;
+        // Quests panel
+        const qp=$('quests-panel');
+        if(qp){
+            if(activeQuests.length===0){qp.textContent='Нет активных квестов. Посети город!';}
+            else{qp.innerHTML=activeQuests.map(q=>`<div style="color:#9977ff">${q.emoji} ${q.name}: <span style="color:#44cc88">${q.progress}/${q.count}</span></div>`).join('');}
+            const qc=$('quest-count'); if(qc) qc.textContent=activeQuests.length;
+        }
+    }
+    function buildInvUI(){
+        const g=$('inv-grid'); g.innerHTML='';
+        const total=player.inventory.length;
+        $('inv-count').textContent=`${total}/${MAX_INV}`;
+
+        const equipped=Object.values(player.equipped).filter(Boolean);
+        const weapons=player.inventory.filter(i=>i.slot==='weapon');
+        const armors=player.inventory.filter(i=>i.slot==='armor');
+        const accessories=player.inventory.filter(i=>i.slot==='accessory');
+        const consumables=player.inventory.filter(i=>i.type==='potion'||i.type==='scroll'||i.effect?.hp||i.effect?.mp);
+        const other=player.inventory.filter(i=>
+            !weapons.includes(i)&&!armors.includes(i)&&!accessories.includes(i)&&!consumables.includes(i)
+        );
+
+        function makeSlot(it){
+            const eq=equipped.includes(it);
+            const s=document.createElement('div');
+            s.className='inv-slot'+(eq?' eq':'');
+            if(it.rarity&&it.rarity.name!=='Обычный'){
+                s.style.borderColor=it.rarity.border;
+                s.style.boxShadow=`0 0 4px ${it.rarity.border}55`;
+            }
+            const rarColor=it.rarity?it.rarity.color:'#6a5860';
+            s.innerHTML=`
+        <span class="si">${it.emoji}</span>
+        <span class="si-info">
+          <span class="sn">${it.name}</span>
+          <span class="sd">${it.desc}</span>
+          ${it.rarity?`<span class="sr" style="color:${rarColor}">${it.rarity.name}</span>`:''}
+        </span>`;
+            s.addEventListener('click',()=>openItemModal(it));
+            s.addEventListener('mouseenter',e=>showTT(e,it));
+            s.addEventListener('mousemove',moveTT);
+            s.addEventListener('mouseleave',hideTT);
+            return s;
+        }
+
+        function addCategory(label, items){
+            if(items.length===0) return;
+            const hdr=document.createElement('div');
+            hdr.className='inv-category'; hdr.textContent=label;
+            g.appendChild(hdr);
+            items.forEach(it=>g.appendChild(makeSlot(it)));
+        }
+
+        if(total===0){
+            const empty=document.createElement('div');
+            empty.style.cssText='color:#2a1a3a;font-size:.6rem;text-align:center;padding:12px 0;font-family:Cinzel,serif;';
+            empty.textContent='Пусто';
+            g.appendChild(empty);
+        } else {
+            addCategory('⚔ Оружие', weapons);
+            addCategory('🛡 Броня', armors);
+            addCategory('💍 Аксессуары', accessories);
+            addCategory('🧪 Расходники', consumables);
+            addCategory('📦 Прочее', other);
+        }
+
+        // Empty slots indicator at bottom
+        const free=MAX_INV-total;
+        if(free>0){
+            const row=document.createElement('div');
+            row.className='inv-empty-slots';
+            for(let i=0;i<free;i++){
+                const c=document.createElement('div');
+                c.className='inv-empty-cell';
+                row.appendChild(c);
+            }
+            g.appendChild(row);
+        }
+    }
+    // ═══════════════════════════════════════════════════════════
+    //  FULL INVENTORY SCREEN
+    // ═══════════════════════════════════════════════════════════
+    let fiTab = 'all';
+    let fullInvOpen = false;
+
+    function openFullInventory(){
+        fullInvOpen = true;
+        buildFullInventory();
+        $('full-inv-modal').classList.add('open');
+    }
+    function closeFullInventory(){
+        fullInvOpen = false;
+        $('full-inv-modal').classList.remove('open');
+        updateUI();
+    }
+    function setFiTab(tab){
+        fiTab = tab;
+        document.querySelectorAll('.fi-tab').forEach(b=>b.classList.remove('active'));
+        event.target.classList.add('active');
+        buildFiLootGrid();
+    }
+
+    function buildFullInventory(){
+        if(!player) return;
+        // Class badge
+        $('fi-cls-ico').textContent = player.classData.emoji;
+        $('fi-cls-name').textContent = player.classData.name.toUpperCase();
+        $('fi-cls-lvl').textContent = `Уровень ${player.level}  •  ${player.hp}/${player.maxHp} HP  •  ${player.mp}/${player.maxMp} MP`;
+        $('fi-inv-count').textContent = `${player.inventory.length}/${MAX_INV} слотов`;
+
+        // Equipment slots
+        ['weapon','armor','accessory'].forEach(slot=>{
+            const it = player.equipped[slot];
+            const ico = $(`eq-${slot}-ico`);
+            const info = $(`eq-${slot}-info`);
+            const card = $(`eq-${slot}`);
+            if(it){
+                card.classList.add('has-item');
+                ico.classList.remove('placeholder');
+                ico.textContent = it.emoji;
+                if(it.rarity) card.style.borderColor = it.rarity.border;
+                const rarColor = it.rarity ? it.rarity.color : '#6a5860';
+                info.innerHTML = `
+          <span class="eq-slot-name">${it.name}</span>
+          <span class="eq-slot-desc">${it.desc}</span>
+          ${it.rarity ? `<span style="font-size:.44rem;font-family:'Cinzel',serif;color:${rarColor}">${it.rarity.name} · нажми чтобы снять</span>` : ''}
+        `;
+            } else {
+                card.classList.remove('has-item');
+                card.style.borderColor='';
+                ico.classList.add('placeholder');
+                const placeholders = {weapon:'⚔',armor:'🛡',accessory:'💍'};
+                ico.textContent = placeholders[slot];
+                const names = {weapon:'Нет оружия',armor:'Нет брони',accessory:'Нет аксессуара'};
+                info.innerHTML = `<span class="eq-slot-empty-txt">${names[slot]}</span>`;
+            }
+        });
+
+        // Stats
+        const sb = $('fi-stats-body');
+        const totalAtk = player.atk + (player.equipped.weapon?.effect?.atk||0);
+        const totalDef = player.def + (player.equipped.armor?.effect?.def||0) + (player.equipped.accessory?.effect?.def||0);
+        const totalHp  = player.maxHp;
+        sb.innerHTML = [
+            ['HP', `${player.hp} / ${totalHp}`],
+            ['MP', `${player.mp} / ${player.maxMp}`],
+            ['Атака', totalAtk],
+            ['Защита', totalDef],
+            ['Крит. шанс', `${Math.round(player.crit*100)}%`],
+            ['Уклонение', `${Math.round(player.dodge*100)}%`],
+            ['Золото', `${player.gold}💰`],
+            ['Опыт', `${player.xp}/${player.xpNext}`],
+        ].map(([k,v])=>`<div class="fi-stat-row"><span class="fi-stat-key">${k}</span><span class="fi-stat-val">${v}</span></div>`).join('');
+
+        buildFiLootGrid();
+    }
+
+    function buildFiLootGrid(){
+        const g = $('fi-loot-grid'); g.innerHTML='';
+        const equipped = Object.values(player.equipped).filter(Boolean);
+        let items = [...player.inventory];
+
+        if(fiTab==='weapon') items=items.filter(i=>i.slot==='weapon');
+        else if(fiTab==='armor') items=items.filter(i=>i.slot==='armor');
+        else if(fiTab==='accessory') items=items.filter(i=>i.slot==='accessory');
+        else if(fiTab==='other') items=items.filter(i=>i.type==='potion'||i.type==='scroll'||(!i.slot||i.slot==='consumable'));
+
+        $('fi-loot-count').textContent = `${items.length} предм.`;
+
+        if(items.length===0){
+            g.innerHTML=`<div class="fi-empty">Нет предметов в этой категории</div>`;
+            return;
+        }
+
+        // Sort: equipped first, then by rarity
+        items.sort((a,b)=>{
+            const ae=equipped.includes(a)?1:0, be=equipped.includes(b)?1:0;
+            if(ae!==be) return be-ae;
+            const ri=['Легендарный','Эпический','Редкий','Обычный'];
+            return (ri.indexOf(a.rarity?.name)||3)-(ri.indexOf(b.rarity?.name)||3);
+        });
+
+        items.forEach(it=>{
+            const eq = equipped.includes(it);
+            const d = document.createElement('div');
+            d.className='fi-item'+(eq?' fi-equipped':'');
+            if(it.rarity&&it.rarity.name!=='Обычный'){
+                d.style.borderColor=it.rarity.border;
+                d.style.boxShadow=`0 0 5px ${it.rarity.border}44`;
+            }
+            const rarColor=it.rarity?it.rarity.color:'#6a5860';
+            d.innerHTML=`
+        <span class="fi-ico">${it.emoji}</span>
+        <div class="fi-info">
+          <span class="fi-name">${it.name}${eq?' <span style="color:var(--gold);font-size:.45rem">[Одето]</span>':''}</span>
+          <span class="fi-desc">${it.desc}</span>
+          ${it.rarity?`<span class="fi-rar" style="color:${rarColor}">${it.rarity.name}</span>`:''}
+        </div>`;
+            d.addEventListener('click',()=>{
+                closeFullInventory();
+                setTimeout(()=>openItemModal(it),50);
+            });
+            d.addEventListener('mouseenter',e=>showTT(e,it));
+            d.addEventListener('mousemove',moveTT);
+            d.addEventListener('mouseleave',hideTT);
+            g.appendChild(d);
+        });
+    }
+
+    function fiUnequip(slot){
+        if(!player.equipped[slot]) return;
+        unequipItem(player.equipped[slot]);
+        buildFullInventory();
+    }
+
+    function unequipItem(it){
+        const slot=it.slot;
+        if(!player.equipped[slot]) return;
+        const old=player.equipped[slot];
+        if(old.effect){
+            if(old.effect.atk){player.baseAtk-=old.effect.atk;player.atk=player.baseAtk;}
+            if(old.effect.def){player.baseDef-=old.effect.def;player.def=player.baseDef;}
+            if(old.effect.maxHp){player.maxHp-=old.effect.maxHp;player.hp=Math.min(player.hp,player.maxHp);}
+            if(old.effect.maxMp){player.maxMp-=old.effect.maxMp;player.mp=Math.min(player.mp,player.maxMp);}
+        }
+        player.equipped[slot]=null;
+        log(`🔓 Снято: ${old.name}`,'info');
+        updateUI();
+    }
+    function log(msg,type='info'){
+        const el=$('log');
+        const d=document.createElement('div'); d.className=`le le-${type}`; d.textContent=msg;
+        el.appendChild(d); el.scrollTop=el.scrollHeight;
+        if(el.children.length>150) el.removeChild(el.firstChild);
+    }
+    function clog(msg,cls){
+        const cl=$('c-log');
+        const d=document.createElement('div'); d.className=cls; d.textContent=msg;
+        cl.appendChild(d); cl.scrollTop=cl.scrollHeight;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  EFFECTS & PARTICLES
+    // ═══════════════════════════════════════════════════════════
+    function addFX(x,y,text,color){effects.push({x,y,text,color,life:42,max:42,dy:0});}
+    function spawnParticles(tx,ty,color,count){
+        for(let i=0;i<count;i++){
+            const angle=rngf()*Math.PI*2, speed=rngf()*2+.8;
+            particles.push({x:(tx+.5)*TILE,y:(ty+.5)*TILE,vx:Math.cos(angle)*speed,
+                vy:Math.sin(angle)*speed-1,color,life:20+rng(0,15),max:35,size:rng(2,4)});
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  ENDGAME
+    // ═══════════════════════════════════════════════════════════
+    function showEndgame(win){
+        if(!win&&player.lives>1){
+            player.lives--;
+            player.hp=Math.floor(player.maxHp*.5);
+            log(`💔 Жизнь потеряна! Осталось: ${player.lives}`,'dmg');
+            if(gameMode==='dungeon') exitDungeon();
+            inCombat=false; $('combat-ov').style.display='none';
+            render(); updateUI(); return;
+        }
+        inCombat=false; $('combat-ov').style.display='none';
+        $('eg-title').textContent=win?'🏆 ПОБЕДА!':'💀 ТЫ ПАЛ';
+        $('eg-title').style.color=win?'#c9913a':'#8b0000';
+        $('eg-stats').textContent=`Уровень ${player.level} · ${player.gold}💰 · ${diff.name}`;
+        $('endgame-ov').style.display='flex';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  RENDERING
+    // ═══════════════════════════════════════════════════════════
+    // World tile colors & icons
+    const WTCOL={
+        [WT.WATER]:  ['#07122a','#09163a'],
+        [WT.GRASS]:  ['#0c180c','#0f1e0f'],
+        [WT.FOREST]: ['#081408','#0a1a0a'],
+        [WT.MOUNTAIN]:['#181818','#1e1e1e'],
+        [WT.ROAD]:   ['#181308','#1e1908'],
+        [WT.CITY]:   ['#1a1208','#221808'],
+        [WT.TOWN]:   ['#121008','#181508'],
+        [WT.DUNGEON]:['#140808','#1c0a0a'],
+        [WT.TRADER]: ['#0c0c08','#141408'],
+        [WT.RUINS]:  ['#110c08','#171208'],
+        [WT.TEMPLE]: ['#0a0c14','#0f1018'],
+    };
+    const WTEMO={
+        [WT.WATER]:'🌊',[WT.FOREST]:'🌲',[WT.MOUNTAIN]:'⛰️',
+        [WT.CITY]:'🏰',[WT.TOWN]:'🏘️',[WT.DUNGEON]:'🕳️',
+        [WT.TRADER]:'🏪',[WT.RUINS]:'🏚️',[WT.TEMPLE]:'⛩️',
+    };
+
+    function render(){
+        if(!player) return;
+        ctx.clearRect(0,0,mapCanvas.width,mapCanvas.height);
+        if(gameMode==='world') renderWorld();
+        else renderDungeon();
+        renderFX();
+        renderMinimap();
+    }
+
+    // World visibility: explored tiles memory
+    let worldExplored = null; // 2D array
+
+    function initWorldExplored(){
+        worldExplored = Array.from({length:WORLD_ROWS}, ()=>Array(WORLD_COLS).fill(false));
+    }
+
+    const WORLD_VIS_RADIUS = 10; // tiles player can see clearly (map terrain)
+    const WORLD_DIM_RADIUS = 14; // tiles that are dimmed (explored but not current view)
+    const WORLD_ENTITY_RADIUS = 6; // radius for seeing monsters/NPCs/items
+
+    function worldCanSee(wx, wy){
+        const dx=wx-player.x, dy=wy-player.y;
+        return dx*dx+dy*dy <= WORLD_VIS_RADIUS*WORLD_VIS_RADIUS;
+    }
+    function worldCanSeeEntity(wx, wy){
+        const dx=wx-player.x, dy=wy-player.y;
+        return dx*dx+dy*dy <= WORLD_ENTITY_RADIUS*WORLD_ENTITY_RADIUS;
+    }
+    function worldInRange(wx, wy){
+        const dx=wx-player.x, dy=wy-player.y;
+        return dx*dx+dy*dy <= WORLD_DIM_RADIUS*WORLD_DIM_RADIUS;
+    }
+
+    function updateWorldFOV(){
+        if(!worldExplored) initWorldExplored();
+        for(let dy=-WORLD_VIS_RADIUS; dy<=WORLD_VIS_RADIUS; dy++){
+            for(let dx=-WORLD_VIS_RADIUS; dx<=WORLD_VIS_RADIUS; dx++){
+                if(dx*dx+dy*dy > WORLD_VIS_RADIUS*WORLD_VIS_RADIUS) continue;
+                const wx=player.x+dx, wy=player.y+dy;
+                if(wx>=0&&wy>=0&&wx<WORLD_COLS&&wy<WORLD_ROWS) worldExplored[wy][wx]=true;
+            }
+        }
+    }
+
+    function renderWorld(){
+        if(!worldExplored) initWorldExplored();
+        const cam=wCam;
+        const vc=visCols(), vr=visRows();
+
+        for(let row=0;row<vr;row++){
+            for(let col=0;col<vc;col++){
+                const wx=cam.x+col, wy=cam.y+row;
+                if(wx<0||wy<0||wx>=WORLD_COLS||wy>=WORLD_ROWS) continue;
+                const tile=worldMap[wy][wx];
+                const px=col*TILE, py=row*TILE;
+                const visible = worldCanSee(wx,wy);
+                const explored = worldExplored[wy][wx];
+
+                if(!explored){
+                    // Completely hidden — draw black
+                    ctx.fillStyle='#040208';
+                    ctx.fillRect(px,py,TILE,TILE);
+                    continue;
+                }
+
+                // Draw tile
+                const [c1,c2]=WTCOL[tile]||['#0d0810','#0d0810'];
+                ctx.fillStyle=(wx+wy)%2===0?c1:c2;
+                ctx.fillRect(px,py,TILE,TILE);
+                if(tile===WT.WATER){ctx.fillStyle='#0a1f55';ctx.fillRect(px+2,py+TILE/2-1,TILE-4,2);}
+                if(tile===WT.ROAD){ctx.fillStyle='#2a2010';ctx.fillRect(px+6,py+TILE/2-2,TILE-12,4);}
+
+                const emo=WTEMO[tile];
+                if(emo){
+                    const big=[WT.CITY,WT.TOWN,WT.DUNGEON,WT.TRADER,WT.TEMPLE,WT.RUINS].includes(tile);
+                    ctx.font=(big?'20':'14')+'px serif';
+                    ctx.textAlign='center'; ctx.textBaseline='middle';
+                    if(big&&visible){ctx.shadowColor='#c9913a';ctx.shadowBlur=8;}
+                    ctx.globalAlpha = visible ? 1 : 0.38;
+                    ctx.fillText(emo,px+TILE/2,py+TILE/2);
+                    ctx.shadowBlur=0; ctx.globalAlpha=1;
+                }
+
+                // Fog overlay for explored-but-not-visible tiles
+                if(!visible){
+                    ctx.fillStyle='rgba(4,2,8,0.62)';
+                    ctx.fillRect(px,py,TILE,TILE);
+                } else {
+                    // Soft vignette at edge of vision
+                    const dist=Math.sqrt((wx-player.x)**2+(wy-player.y)**2);
+                    if(dist>WORLD_VIS_RADIUS-1.5){
+                        const fade=Math.min(1,(dist-(WORLD_VIS_RADIUS-1.5))/1.5)*0.45;
+                        ctx.fillStyle=`rgba(4,2,8,${fade})`;
+                        ctx.fillRect(px,py,TILE,TILE);
+                    }
+                }
+            }
+        }
+
+        // Location labels (only if visible or explored)
+        for(const loc of WORLD_LOCATIONS){
+            if(!worldExplored[loc.y]?.[loc.x]) continue;
+            const sx=(loc.x-cam.x)*TILE+TILE/2, sy=(loc.y-cam.y)*TILE;
+            if(sx<-40||sx>mapCanvas.width+40||sy<0||sy>mapCanvas.height) continue;
+            const vis=worldCanSee(loc.x,loc.y);
+            ctx.globalAlpha=vis?1:0.5;
+            ctx.font='7px Cinzel,serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+            ctx.fillStyle='#c9913a'; ctx.fillText(loc.name,sx,sy-1);
+            ctx.globalAlpha=1;
+        }
+
+        // World items (only in vision)
+        for(const it of worldItems){
+            if(!worldCanSeeEntity(it.x,it.y)) continue;
+            const sx=(it.x-cam.x)*TILE+TILE/2, sy=(it.y-cam.y)*TILE+TILE/2;
+            if(sx<0||sx>mapCanvas.width||sy<0||sy>mapCanvas.height) continue;
+            ctx.font='16px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.shadowColor='#ffdd88'; ctx.shadowBlur=6;
+            ctx.fillText(it.emoji,sx,sy); ctx.shadowBlur=0;
+        }
+
+        // World NPCs (only in vision)
+        for(const npc of worldNPCs){
+            if(!worldCanSeeEntity(npc.x,npc.y)) continue;
+            const sx=(npc.x-cam.x)*TILE+TILE/2, sy=(npc.y-cam.y)*TILE+TILE/2;
+            if(sx<-TILE||sx>mapCanvas.width||sy<-TILE||sy>mapCanvas.height) continue;
+            ctx.shadowColor=npc.questId&&!completedQuests.find(q=>q.id===npc.questId)?'#ffdd44':'#88aaff';
+            ctx.shadowBlur=10;
+            ctx.font='18px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(npc.emoji, sx, sy+2);
+            ctx.shadowBlur=0;
+            const hasPendingQuest=npc.questId&&!activeQuests.find(q=>q.id===npc.questId)&&!completedQuests.find(q=>q.id===npc.questId);
+            if(hasPendingQuest){
+                ctx.fillStyle='#ffdd44'; ctx.font='bold 11px sans-serif';
+                ctx.textAlign='center'; ctx.textBaseline='middle';
+                ctx.fillText('!', sx+9, sy-9);
+            }
+        }
+
+        // World monsters (only in entity vision)
+        for(const m of worldMonsters){
+            if(!worldCanSeeEntity(m.x,m.y)) continue;
+            const sx=(m.x-cam.x)*TILE, sy=(m.y-cam.y)*TILE;
+            if(sx<-TILE||sx>mapCanvas.width||sy<-TILE||sy>mapCanvas.height) continue;
+            const r=m.hp/m.maxHp;
+            ctx.fillStyle='#220000'; ctx.fillRect(sx+2,sy+2,TILE-4,4);
+            ctx.fillStyle=r>.5?'#cc2200':r>.25?'#cc7700':'#ffdd00';
+            ctx.fillRect(sx+2,sy+2,(TILE-4)*r,4);
+            ctx.shadowColor=m.color; ctx.shadowBlur=8;
+            ctx.font='18px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(m.emoji,sx+TILE/2,sy+TILE/2+2); ctx.shadowBlur=0;
+        }
+
+        // Player
+        renderPlayer(cam);
+    }
+
+    function renderDungeon(){
+        const cam=dCam;
+        const vc=visCols(), vr=visRows();
+        const th=dTheme();
+        for(let row=0;row<vr;row++){
+            for(let col=0;col<vc;col++){
+                const wx=cam.x+col, wy=cam.y+row;
+                if(wx<0||wy<0||wx>=DUNG_SIZE||wy>=DUNG_SIZE) continue;
+                if(!dVis[wy][wx]) continue;
+                const tile=dMap[wy][wx];
+                const px=col*TILE, py=row*TILE;
+                const vis=dungCanSee(wx,wy);
+                ctx.globalAlpha=vis?1:.28;
+                if(tile===DT.WALL){
+                    ctx.fillStyle=th.wall; ctx.fillRect(px,py,TILE,TILE);
+                    ctx.fillStyle=th.wallH; ctx.fillRect(px+1,py+1,TILE-2,TILE/2);
+                } else {
+                    ctx.fillStyle=(wx+wy)%3===0?th.floor1:th.floor2;
+                    ctx.fillRect(px,py,TILE,TILE);
+                    if(tile===DT.STAIRS){
+                        ctx.fillStyle='#1a0e2a'; ctx.fillRect(px,py,TILE,TILE);
+                        ctx.shadowColor=th.stair; ctx.shadowBlur=12;
+                        ctx.font='20px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+                        ctx.fillStyle=th.stair; ctx.fillText('▼',px+TILE/2,py+TILE/2);
+                        ctx.shadowBlur=0;
+                    }
+                }
+                ctx.globalAlpha=1;
+            }
+        }
+        // Traps
+        for(const tr of dTraps){
+            if(!dVis[tr.y][tr.x]||tr.triggered) continue;
+            const sx=(tr.x-cam.x)*TILE+TILE/2, sy=(tr.y-cam.y)*TILE+TILE/2;
+            if(sx<0||sx>mapCanvas.width||sy<0||sy>mapCanvas.height) continue;
+            ctx.globalAlpha=dungCanSee(tr.x,tr.y)?1:.25;
+            if(tr.altar){ctx.shadowColor='#ffaa00';ctx.shadowBlur=dungCanSee(tr.x,tr.y)?9:0;}
+            else{ctx.shadowColor='#ff4400';ctx.shadowBlur=5;}
+            ctx.font='15px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(tr.altar?'⛩️':'⚠️',sx,sy);
+            ctx.shadowBlur=0; ctx.globalAlpha=1;
+        }
+        // Chests
+        for(const ch of dChests){
+            if(!dVis[ch.y]||!dVis[ch.y][ch.x]) continue;
+            const sx=(ch.x-cam.x)*TILE+TILE/2, sy=(ch.y-cam.y)*TILE+TILE/2;
+            if(sx<0||sx>mapCanvas.width||sy<0||sy>mapCanvas.height) continue;
+            ctx.globalAlpha=dungCanSee(ch.x,ch.y)?1:.25;
+            ctx.shadowColor=ch.opened?'#556655':'#c9913a'; ctx.shadowBlur=8;
+            ctx.font='16px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(ch.opened?'📭':'📦',sx,sy); ctx.shadowBlur=0; ctx.globalAlpha=1;
+        }
+        // Items
+        for(const it of dItems){
+            if(!dVis[it.y]||!dVis[it.y][it.x]) continue;
+            const sx=(it.x-cam.x)*TILE+TILE/2, sy=(it.y-cam.y)*TILE+TILE/2;
+            if(sx<0||sx>mapCanvas.width||sy<0||sy>mapCanvas.height) continue;
+            ctx.globalAlpha=dungCanSee(it.x,it.y)?1:.25;
+            ctx.shadowColor='#ffdd88'; ctx.shadowBlur=6;
+            ctx.font='16px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(it.emoji,sx,sy); ctx.shadowBlur=0; ctx.globalAlpha=1;
+        }
+        // Monsters
+        for(const m of dMonsters){
+            if(!dungCanSee(m.x,m.y)) continue;
+            const sx=(m.x-cam.x)*TILE, sy=(m.y-cam.y)*TILE;
+            if(sx<-TILE||sx>mapCanvas.width||sy<-TILE||sy>mapCanvas.height) continue;
+            const r=m.hp/m.maxHp;
+            ctx.fillStyle='#220000'; ctx.fillRect(sx+2,sy+2,TILE-4,4);
+            ctx.fillStyle=r>.5?'#cc2200':r>.25?'#cc7700':'#ffdd00';
+            ctx.fillRect(sx+2,sy+2,(TILE-4)*r,4);
+            ctx.shadowColor=m.color; ctx.shadowBlur=8;
+            ctx.font='18px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(m.emoji,sx+TILE/2,sy+TILE/2+2); ctx.shadowBlur=0;
+        }
+        renderPlayer(cam);
+    }
+
+    function renderPlayer(cam){
+        const sx=(player.x-cam.x)*TILE+TILE/2, sy=(player.y-cam.y)*TILE+TILE/2;
+        const col=player.classData.color;
+        const t=Date.now()/1000;
+        const bob=Math.sin(t*2)*1.2; // idle bob animation
+        const cy=sy+bob;
+
+        ctx.save();
+
+        // === AURA / GROUND SHADOW ===
+        const aura=ctx.createRadialGradient(sx,sy+TILE/2-4,1,sx,sy+TILE/2-4,TILE/2+2);
+        aura.addColorStop(0,col+'55');
+        aura.addColorStop(1,'transparent');
+        ctx.fillStyle=aura;
+        ctx.beginPath(); ctx.ellipse(sx,sy+TILE/2-4,TILE/2+2,6,0,0,Math.PI*2); ctx.fill();
+
+        // === OUTER GLOW RING ===
+        ctx.shadowColor=col; ctx.shadowBlur=18+Math.sin(t*3)*4;
+        ctx.strokeStyle=col+'88';
+        ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(sx,cy,TILE/2-2,0,Math.PI*2); ctx.stroke();
+        ctx.shadowBlur=0;
+
+        // === BODY ===
+        // Main circle - class color gradient
+        const bodyGrad=ctx.createRadialGradient(sx-3,cy-4,1,sx,cy,TILE/2-3);
+        bodyGrad.addColorStop(0,'#ffffff44');
+        bodyGrad.addColorStop(0.4,col+'ee');
+        bodyGrad.addColorStop(1,col+'66');
+        ctx.fillStyle=bodyGrad;
+        ctx.shadowColor=col; ctx.shadowBlur=12;
+        ctx.beginPath(); ctx.arc(sx,cy,TILE/2-3,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0;
+
+        // Inner dark core
+        const innerGrad=ctx.createRadialGradient(sx,cy,0,sx,cy,TILE/2-7);
+        innerGrad.addColorStop(0,'#1a0e2a');
+        innerGrad.addColorStop(1,'#07030a');
+        ctx.fillStyle=innerGrad;
+        ctx.beginPath(); ctx.arc(sx,cy,TILE/2-7,0,Math.PI*2); ctx.fill();
+
+        // === CLASS EMOJI (larger, centered) ===
+        ctx.shadowColor=col; ctx.shadowBlur=8;
+        ctx.font='13px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(player.classData.emoji,sx,cy);
+        ctx.shadowBlur=0;
+
+        // === LEVEL BADGE (top-right of sprite) ===
+        const bx=sx+TILE/2-5, by=cy-TILE/2+5;
+        ctx.fillStyle='#07030a';
+        ctx.beginPath(); ctx.arc(bx,by,6,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle=col; ctx.lineWidth=1;
+        ctx.stroke();
+        ctx.fillStyle=col;
+        ctx.font='bold 7px Cinzel,serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(player.level,bx,by);
+
+        // === HEALTH BAR BELOW SPRITE ===
+        const bary=sy+TILE/2-3;
+        const barw=TILE-6, barx=sx-barw/2;
+        ctx.fillStyle='#220000';
+        ctx.fillRect(barx,bary,barw,3);
+        const hpRatio=player.hp/player.maxHp;
+        ctx.fillStyle=hpRatio>.5?'#cc2200':hpRatio>.25?'#cc7700':'#ffdd00';
+        ctx.fillRect(barx,bary,barw*hpRatio,3);
+
+        ctx.restore();
+
+        // === MOVE RANGE HIGHLIGHT ===
+        if(gameMode==='world'&&diceRolled&&movePoints>0){
+            const r=movePoints;
+            for(let dy=-r;dy<=r;dy++){
+                for(let dx=-r;dx<=r;dx++){
+                    if(Math.abs(dx)+Math.abs(dy)>r) continue;
+                    const wx=player.x+dx, wy=player.y+dy;
+                    if(wx<0||wy<0||wx>=WORLD_COLS||wy>=WORLD_ROWS) continue;
+                    if(worldMap[wy][wx]===WT.WATER) continue;
+                    const px=(wx-cam.x)*TILE, py=(wy-cam.y)*TILE;
+                    ctx.fillStyle='rgba(201,145,58,0.08)';
+                    ctx.fillRect(px,py,TILE,TILE);
+                    // Border dots at corners
+                    ctx.fillStyle='rgba(201,145,58,0.18)';
+                    ctx.fillRect(px,py,2,2);
+                    ctx.fillRect(px+TILE-2,py,2,2);
+                }
+            }
+        }
+    }
+
+    function renderFX(){
+        const cam=gameMode==='world'?wCam:dCam;
+        for(let i=effects.length-1;i>=0;i--){
+            const ef=effects[i]; ef.dy-=.5; ef.life--;
+            if(ef.life<=0){effects.splice(i,1);continue;}
+            const sx=(ef.x-cam.x)*TILE+TILE/2, sy=(ef.y-cam.y)*TILE+TILE/2;
+            ctx.globalAlpha=ef.life/ef.max; ctx.fillStyle=ef.color;
+            ctx.font='bold 11px Crimson Text,serif';
+            ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(ef.text,sx,sy+ef.dy); ctx.globalAlpha=1;
+        }
+        for(let i=particles.length-1;i>=0;i--){
+            const p=particles[i];
+            p.x+=p.vx; p.y+=p.vy; p.vy+=.15; p.life--;
+            if(p.life<=0){particles.splice(i,1);continue;}
+            ctx.globalAlpha=(p.life/p.max)*.85;
+            ctx.fillStyle=p.color;
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.size*(p.life/p.max),0,Math.PI*2); ctx.fill();
+            ctx.globalAlpha=1;
+        }
+    }
+
+    function renderMinimap(){
+        const mw=miniCv.width, mh=miniCv.height;
+        mctx.fillStyle='#07030a'; mctx.fillRect(0,0,mw,mh);
+        if(gameMode==='world'){
+            const tw=mw/WORLD_COLS, th=mh/WORLD_ROWS;
+            const MCOL={[WT.WATER]:'#0a1a3a',[WT.GRASS]:'#1a2a1a',[WT.FOREST]:'#0a1a0a',
+                [WT.MOUNTAIN]:'#2a2a2a',[WT.ROAD]:'#2a2010',
+                [WT.CITY]:'#c9913a',[WT.TOWN]:'#886633',
+                [WT.DUNGEON]:'#440000',[WT.TRADER]:'#334400',
+                [WT.TEMPLE]:'#334466',[WT.RUINS]:'#333322',};
+            for(let y=0;y<WORLD_ROWS;y++)for(let x=0;x<WORLD_COLS;x++){
+                if(worldExplored&&!worldExplored[y][x]){mctx.fillStyle='#040208';}
+                else{mctx.fillStyle=MCOL[worldMap[y][x]]||'#1a1028';}
+                mctx.fillRect(x*tw,y*th,tw,th);
+            }
+            for(const m of worldMonsters){
+                if(!worldCanSeeEntity(m.x,m.y)) continue;
+                mctx.fillStyle='#cc2200';
+                mctx.fillRect(m.x*tw,m.y*th,Math.max(tw,2),Math.max(th,2));
+            }
+            for(const n of worldNPCs){
+                if(!worldExplored||!worldExplored[n.y][n.x]) continue;
+                mctx.fillStyle='#ffdd44';
+                mctx.fillRect(n.x*tw,n.y*th,Math.max(tw,2),Math.max(th,2));
+            }
+            mctx.fillStyle='#ffdd44';
+            mctx.fillRect(player.x*tw-1,player.y*th-1,Math.max(tw*1.5,4),Math.max(th*1.5,4));
+        } else {
+            const tw=mw/DUNG_SIZE, th=mh/DUNG_SIZE;
+            for(let y=0;y<DUNG_SIZE;y++)for(let x=0;x<DUNG_SIZE;x++){
+                if(!dVis[y][x]) continue;
+                mctx.fillStyle=dMap[y][x]===DT.WALL?'#1a1028':dMap[y][x]===DT.STAIRS?'#c9913a':'#3a2a50';
+                mctx.fillRect(x*tw,y*th,tw,th);
+            }
+            for(const m of dMonsters)if(dungCanSee(m.x,m.y)){mctx.fillStyle='#cc2200';mctx.fillRect(m.x*tw,m.y*th,tw,th);}
+            mctx.fillStyle='#ffdd44'; mctx.fillRect(player.x*tw,player.y*th,tw,th);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  GAME LOOP
+    // ═══════════════════════════════════════════════════════════
+    function gameLoop(){
+        if(player) render(); // always render for player bob animation
+        requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+
+    // ═══════════════════════════════════════════════════════════
+    //  INPUT
+    // ═══════════════════════════════════════════════════════════
+    document.addEventListener('keydown',e=>{
+        if(!player||!$('s-game').classList.contains('show')) return;
+        if(e.key==='i'||e.key==='I'){if(player&&!inCombat)openFullInventory();return;}
+        if($('npc-modal').classList.contains('open')){if(e.key==='Escape')closeNpcDialog();return;}
+        if($('full-inv-modal').classList.contains('open')){if(e.key==='Escape'||e.key==='i'||e.key==='I')closeFullInventory();return;}
+        if($('dung-prompt').classList.contains('open')){
+            if(e.key==='Escape')closeDungPrompt();
+            if(e.key==='Enter')enterDungeon();
+            return;
+        }
+        if(shopOpen){if(e.key==='Escape')closeShop();return;}
+        switch(e.code){
+            case'ArrowUp':   case'KeyW': e.preventDefault(); tryMove(0,-1); break;
+            case'ArrowDown': case'KeyS': e.preventDefault(); tryMove(0,1);  break;
+            case'ArrowLeft': case'KeyA': e.preventDefault(); tryMove(-1,0); break;
+            case'ArrowRight':case'KeyD': e.preventDefault(); tryMove(1,0);  break;
+            case'KeyF': pickupItem(); break;
+            case'KeyR': if(!inCombat) rollMoveDice(); break;
+            case'KeyE':
+                if(gameMode==='world'){
+                    const loc=WORLD_LOCATIONS.find(l=>l.x===player.x&&l.y===player.y);
+                    if(loc&&loc.type===WT.DUNGEON) showDungPrompt(loc);
+                    else if(loc&&(loc.type===WT.TRADER||loc.type===WT.CITY)) openShop(loc.name, loc.questBoard);
+                } else {
+                    if(confirm('Покинуть подземелье?')) exitDungeon();
+                }
+                break;
+            case'Digit1': if(inCombat&&playerTurn) combatAction('s1'); break;
+            case'Digit2': if(inCombat&&playerTurn) combatAction('s2'); break;
+            case'Escape': closeItemModal(); break;
+        }
+        updateUI();
+    });
+</script>
+</body>
+</html>
